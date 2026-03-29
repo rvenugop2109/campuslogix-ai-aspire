@@ -2844,6 +2844,279 @@ html,body{width:100%;height:auto;font-family:'Sora',sans-serif;overflow:auto}
 .s31-wm em{font-style:normal;color:var(--pale-blue)}
 .s31-pg{font-size:clamp(16px,2.2vw,30px);font-weight:300;color:rgba(255,255,255,.5);letter-spacing:.04em}
 .s31-div{width:clamp(40px,5vw,72px);height:2px;margin-top:clamp(8px,1vw,14px);background:linear-gradient(to right,transparent,var(--periwinkle),var(--deep-blue),transparent);border-radius:2px}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   MOBILE RESPONSIVE — ≤ 768px
+   ═══════════════════════════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+
+  /* ── Global slide: let content expand beyond 100vh rather than clip ── */
+  .slide {
+    overflow: visible;
+    min-height: 100vh;
+  }
+
+  /* ── Top bar: tighter padding, stack label + title ── */
+  .top-bar,
+  .s6-top,
+  .s7-top-bar {
+    padding: 14px 20px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+  .top-bar-title,
+  .s6-top-title,
+  .s7-title { font-size: 13px; }
+
+  /* ── SLIDE 00 — title wordmark can wrap ── */
+  .s00-wordmark { white-space: normal; font-size: clamp(36px,10vw,60px); }
+  .s00-inner { padding: 32px 24px; }
+
+  /* ── SLIDE 01 — Hero: stack left/right ── */
+  #slide-01 { grid-template-columns: 1fr; }
+  .junction { display: none; }
+  .s1-left,
+  .s1-right { padding: 32px 24px; }
+  .s1-right { min-height: 50vh; }
+
+  /* ── SLIDE 02 — Opportunity ── */
+  .s2-content { grid-template-columns: 1fr; }
+  .col-left {
+    border-right: none;
+    border-bottom: 1px solid rgba(26,26,230,0.1);
+    padding: 28px 20px;
+  }
+  .col-right { padding: 28px 20px; }
+
+  /* ── SLIDE 03 — stat row: 2 columns ── */
+  .stat-row { grid-template-columns: repeat(2, 1fr); }
+  .bottom-strip { padding: 16px 20px; }
+
+  /* ── SLIDE 05 — Not a Tech Course ── */
+  #slide-05 { grid-template-columns: 1fr; }
+  .s5-left {
+    border-right: none;
+    border-bottom: 1px solid rgba(26,26,230,0.08);
+    padding: 28px 20px;
+  }
+  .s5-right { padding: 28px 20px; }
+
+  /* ── SLIDE 06 — Four-Year Arc ── */
+  .s6-body { grid-template-columns: 1fr; }
+  .s6-explain {
+    border-right: none;
+    border-bottom: 1px solid rgba(26,26,230,0.1);
+    padding: 28px 20px;
+  }
+  .s6-visual { padding: 24px 20px; }
+  .arc-grid { grid-template-columns: repeat(2, 1fr); }
+  .arc-line { display: none; }
+
+  /* ── SLIDE 07 — Five Pillars ── */
+  .s7-pillars-area { padding: 0 16px; }
+  .pillars-row {
+    grid-template-columns: repeat(2, 1fr);
+    align-items: start;
+    padding-bottom: 32px;
+  }
+
+  /* ── SLIDE 08 — Graduate Can Do ── */
+  .s8-body { grid-template-columns: 1fr; }
+  .s8-left {
+    min-height: 40vh;
+    padding: 28px 20px;
+  }
+  .s8-right { padding: 28px 20px; }
+
+  /* ── SLIDE 09 — Programme at a Glance ── */
+  .s9-main { grid-template-columns: 1fr; }
+  .s9-left {
+    border-right: none;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    padding: 28px 20px;
+  }
+  .s9-right { padding: 20px 20px; }
+
+  /* ── SLIDE 11 — Pillar 1 ── */
+  .s11-body { grid-template-columns: 1fr; }
+  .s11-left {
+    border-right: none;
+    border-bottom: 1px solid rgba(26,26,230,0.08);
+    padding: 28px 20px;
+  }
+  .s11-right {
+    overflow-y: visible;
+    min-height: auto;
+    padding: 28px 20px;
+  }
+
+  /* ── SLIDES 12–16 — Shared pillar layout ── */
+  .pillar-body { grid-template-columns: 1fr; }
+  .pillar-left {
+    border-right: none;
+    border-bottom: 1px solid rgba(26,26,230,0.08);
+    padding: 28px 20px;
+  }
+  .pillar-right {
+    overflow-y: visible;
+    min-height: auto;
+    padding: 28px 20px;
+  }
+
+  /* ── Grade bar: stack on mobile ── */
+  .grade-bar {
+    padding: 12px 20px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .grade-bar-right { gap: 16px; }
+
+  /* ── Tab strip: horizontally scrollable ── */
+  .tab-strip {
+    padding: 0 16px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .tab-strip::-webkit-scrollbar { display: none; }
+  .tab-btn { padding: 10px 14px; font-size: 12px; }
+
+  /* ── SLIDES 17–20 — Curriculum tabs: release fixed height ── */
+  #slide-17,
+  #slide-18,
+  #slide-19,
+  #slide-20 {
+    height: auto;
+    min-height: auto;
+    overflow: visible;
+  }
+
+  /* Slide 17 scoped overrides */
+  #slide-17 {
+    height: auto;
+    overflow: visible;
+  }
+  #slide-17 .tab-panels {
+    position: static;
+    overflow: visible;
+    min-height: auto;
+  }
+  #slide-17 .tab-panel {
+    display: none;
+    position: static;
+    height: auto;
+    overflow: visible;
+  }
+  #slide-17 .tab-panel.active {
+    display: grid;
+    grid-template-columns: 1fr;
+    height: auto;
+    overflow: visible;
+  }
+  #slide-17 .tp-col {
+    height: auto;
+    overflow-y: visible;
+    padding: 20px 20px;
+  }
+
+  /* Global tab panel model → display:none/grid on mobile */
+  .tab-panels {
+    position: static;
+    overflow: visible;
+    min-height: auto;
+  }
+  .tab-panel {
+    position: static;
+    display: none;
+    opacity: 1;
+    pointer-events: auto;
+    grid-template-columns: 1fr;
+    overflow: visible;
+  }
+  .tab-panel.active {
+    display: grid;
+    opacity: 1;
+  }
+  .tp-col {
+    padding: 20px 20px;
+    overflow-y: visible;
+  }
+  .tp-col-right {
+    border-left: none;
+    border-top: 1px solid rgba(26,26,230,0.07);
+  }
+
+  /* ── SLIDE 22 — Tool Matrix: stack + horizontal scroll for matrix ── */
+  .s22-body { grid-template-columns: 1fr; }
+  .s22-left {
+    border-right: none;
+    border-bottom: 1px solid rgba(26,26,230,0.08);
+    padding: 28px 20px;
+  }
+  .s22-right {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 16px 20px 32px;
+  }
+  .matrix-headers,
+  .matrix-row { min-width: 480px; }
+
+  /* ── SLIDE 23 — Landscape Approach ── */
+  .s23-body { grid-template-columns: 1fr; }
+  .s23-left {
+    border-right: none;
+    border-bottom: 1px solid rgba(26,26,230,0.08);
+    padding: 28px 20px;
+  }
+  .s23-right { padding: 28px 20px; justify-content: flex-start; }
+
+  /* ── SLIDE 25 — Assessment ── */
+  .s25-body { grid-template-columns: 1fr; }
+  .s25-left {
+    border-right: none;
+    border-bottom: 1px solid rgba(26,26,230,0.08);
+    padding: 28px 20px;
+  }
+  .s25-right { padding: 28px 20px; justify-content: flex-start; }
+
+  /* ── SLIDE 26 — Credentials ── */
+  .s26-body { grid-template-columns: 1fr; }
+  .s26-left {
+    border-right: none;
+    border-bottom: 1px solid rgba(26,26,230,0.08);
+    padding: 28px 20px;
+  }
+  .s26-right { padding: 28px 20px; justify-content: flex-start; }
+
+  /* ── SLIDE 27 — Interlude ── */
+  #slide-27 { padding: clamp(40px,8vw,80px) 24px; }
+
+  /* ── SLIDE 28 — Four Profiles ── */
+  .s28-body { grid-template-columns: 1fr; }
+  .s28-left {
+    border-right: none;
+    border-bottom: 1px solid rgba(26,26,230,0.08);
+    padding: 28px 20px;
+  }
+  .s28-right { grid-template-columns: 1fr; padding: 28px 20px; }
+
+  /* ── SLIDE 29 — Why Now ── */
+  .s29-body { grid-template-columns: 1fr; }
+  .s29-left {
+    border-right: none;
+    border-bottom: 1px solid rgba(26,26,230,0.08);
+    padding: 28px 20px;
+  }
+  .s29-right { padding: 28px 20px; }
+  .cw { flex-direction: column; align-items: stretch; gap: 20px; }
+  .cc { flex: none; }
+
+  /* ── SLIDE 30 & 31 — close-out slides ── */
+  #slide-30 { padding: 48px 24px; }
+
+}
 </style>
 </head>
 <body>
