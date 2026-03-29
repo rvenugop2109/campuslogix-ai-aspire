@@ -1,13 +1,10 @@
 {
-  "routes": [
+  "headers": [
     {
-      "src": "/",
-      "dest": "/campuslogix_deck_master.html",
-      "headers": { "Content-Type": "text/html; charset=utf-8" }
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/$1"
+      "source": "/(.*)",
+      "headers": [
+        { "key": "Content-Type", "value": "text/html; charset=utf-8" }
+      ]
     }
   ]
 }
