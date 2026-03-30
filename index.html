@@ -10,18 +10,10 @@
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{--deep-blue:#1A1AE6;--mid-blue:#3333CC;--periwinkle:#7B7BE8;--pale-blue:#A0A0F5;--off-white:#F4F4FB;--dark-navy:#1C1C2E;--white:#FFFFFF;--mid-grey:#4A4A6A;--light-grey:#8888A8}
-html,body{width:100%;height:auto;font-family:'Sora',sans-serif;overflow:auto}
-.deck{width:100%;height:auto;position:relative}
-.slide{position:relative;display:block;width:100%;min-height:100vh;transform:none;overflow:hidden}
-/* ── SLIDE 00 — TITLE ── */
-#slide-00{background:var(--dark-navy);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
-#slide-00::before{content:'';position:absolute;inset:0;background-image:radial-gradient(rgba(160,160,245,0.07) 1px,transparent 1px);background-size:28px 28px;pointer-events:none}
-.s00-inner{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:clamp(16px,2vw,28px);text-align:center;padding:clamp(40px,6vw,80px)}
-.s00-wordmark{font-size:clamp(52px,7vw,96px);font-weight:700;letter-spacing:0.04em;line-height:1;white-space:nowrap}
-.s00-wordmark .campus{color:#FFFFFF}
-.s00-wordmark .logix{color:#A0A0F5}
-.s00-programme{font-size:clamp(14px,1.5vw,20px);font-weight:300;color:rgba(255,255,255,0.45);letter-spacing:0.12em;text-transform:uppercase}
-.s00-divider{width:clamp(60px,8vw,120px);height:1px;background:linear-gradient(90deg,transparent,rgba(160,160,245,0.4),transparent)}
+html,body{width:100%;height:100%;font-family:'Sora',sans-serif;overflow:hidden}
+.deck{width:100vw;height:100vh;position:relative;overflow:hidden}
+.slide{position:absolute;inset:0;width:100%;height:100%;overflow:hidden}
+
 /* ── section_01_open.html ── */
 /* ── RESET ───────────────────────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -39,28 +31,87 @@ html,body{width:100%;height:auto;font-family:'Sora',sans-serif;overflow:auto}
 }
 
 html, body {
-  width: 100%; height: auto;
+  width: 100%; height: 100%;
   font-family: 'Sora', sans-serif;
   background: var(--dark-navy);
-  overflow: auto;
+  overflow: hidden;
 }
 
 /* ── DECK WRAPPER ────────────────────────────────────────────────────────── */
 .deck {
-  width: 100%;
-  height: auto;
+  width: 100vw;
+  height: 100vh;
   position: relative;
-}
-
-/* Each slide fills the full viewport, stacked vertically */
-.slide {
-  position: relative;
-  display: block;
-  width: 100%;
-  min-height: 100vh;
-  transform: none;
   overflow: hidden;
 }
+
+/* Each slide fills the full viewport, stacked via transform */
+.slide {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  transform: translateY(100%);
+  transition: transform 0.45s cubic-bezier(0.65, 0, 0.35, 1);
+  will-change: transform;
+  overflow: hidden;
+}
+
+.slide.active   { transform: translateY(0); }
+.slide.prev     { transform: translateY(-100%); }
+/* inactive slides stay at translateX(100%) by default */
+
+/* ── NAV DOTS ────────────────────────────────────────────────────────────── */
+.nav-dots {
+  position: fixed;
+  bottom: clamp(18px, 2.5vw, 32px);
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 10px;
+  z-index: 100;
+}
+.nav-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.2);
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: background 0.25s, transform 0.25s;
+}
+.nav-dot.active {
+  background: var(--periwinkle);
+  transform: scale(1.3);
+}
+
+/* ── NAV ARROWS ─────────────────────────────────────────────────────────── */
+.nav-arrow {
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 100;
+  width: clamp(36px, 3.5vw, 48px);
+  height: clamp(36px, 3.5vw, 48px);
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.15);
+  background: rgba(255,255,255,0.06);
+  color: rgba(255,255,255,0.5);
+  font-size: clamp(14px, 1.4vw, 18px);
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
+  backdrop-filter: blur(4px);
+}
+.nav-arrow:hover {
+  background: rgba(123,123,232,0.2);
+  border-color: rgba(123,123,232,0.4);
+  color: var(--white);
+}
+.nav-arrow.left  { left:  clamp(12px, 1.5vw, 24px); }
+.nav-arrow.right { right: clamp(12px, 1.5vw, 24px); }
+.nav-arrow:disabled { opacity: 0.2; cursor: default; }
+.nav-arrow:disabled:hover { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.15); color: rgba(255,255,255,0.5); }
 
 /* ── SLIDE BADGE (shared) ────────────────────────────────────────────────── */
 .slide-badge {
@@ -427,6 +478,7 @@ html, body {
   letter-spacing: 0.12em; text-transform: uppercase;
   color: rgba(255,255,255,0.15);
 }
+
 /* ── section_02_programme.html ── */
 /* ── RESET ───────────────────────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -441,19 +493,50 @@ html, body {
   --mid-grey:   #4A4A6A;
   --light-grey: #8888A8;
 }
-html, body { width: 100%; height: auto; font-family: 'Sora', sans-serif; overflow: auto; }
+html, body { width: 100%; height: 100%; font-family: 'Sora', sans-serif; overflow: hidden; }
 
 /* ── DECK ────────────────────────────────────────────────────────────────── */
-.deck { width: 100%; height: auto; position: relative; }
+.deck { width: 100vw; height: 100vh; position: relative; overflow: hidden; }
 
 .slide {
-  position: relative;
-  display: block;
-  width: 100%;
-  min-height: 100vh;
-  transform: none;
-  overflow: hidden;
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  transform: translateY(100%);
+  transition: transform 0.45s cubic-bezier(0.65, 0, 0.35, 1);
+  will-change: transform; overflow: hidden;
 }
+.slide.active { transform: translateY(0); }
+.slide.prev   { transform: translateY(-100%); }
+
+/* ── NAV ─────────────────────────────────────────────────────────────────── */
+.nav-dots {
+  position: fixed; bottom: clamp(18px,2.5vw,32px); left: 50%;
+  transform: translateX(-50%); display: flex; gap: 10px; z-index: 100;
+}
+.nav-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: rgba(255,255,255,0.2); border: none; cursor: pointer; padding: 0;
+  transition: background 0.25s, transform 0.25s;
+}
+.nav-dot.active { background: var(--periwinkle); transform: scale(1.3); }
+.nav-dot.dark { background: rgba(28,28,46,0.2); }
+.nav-dot.dark.active { background: var(--deep-blue); }
+
+.nav-arrow {
+  position: fixed; left: 50%; transform: translateX(-50%);
+  z-index: 100;
+  width: clamp(36px,3.5vw,48px); height: clamp(36px,3.5vw,48px);
+  border-radius: 50%; border: 1px solid rgba(255,255,255,0.15);
+  background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.5);
+  font-size: clamp(14px,1.4vw,18px); cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
+  backdrop-filter: blur(4px);
+}
+.nav-arrow:hover { background: rgba(123,123,232,0.2); border-color: rgba(123,123,232,0.4); color: var(--white); }
+.nav-arrow.up   { top:  clamp(12px,1.5vw,24px); }
+.nav-arrow.down { bottom: clamp(52px,6vw,76px); }
+.nav-arrow:disabled { opacity: 0.2; cursor: default; }
+.nav-arrow:disabled:hover { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.15); color: rgba(255,255,255,0.5); }
 
 /* Slide badge */
 .slide-badge {
@@ -1044,6 +1127,7 @@ html, body { width: 100%; height: auto; font-family: 'Sora', sans-serif; overflo
   font-size: clamp(10px,0.95vw,12px); font-weight: 400; color: rgba(255,255,255,0.4); margin-top: 2px;
 }
 .s9-param-divider { width: 1px; height: 18px; background: rgba(255,255,255,0.08); flex-shrink: 0; }
+
 /* ── section_03_complete.html ── */
 /* ── RESET & VARS ────────────────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -1058,19 +1142,50 @@ html, body { width: 100%; height: auto; font-family: 'Sora', sans-serif; overflo
   --mid-grey:   #4A4A6A;
   --light-grey: #8888A8;
 }
-html, body { width: 100%; height: auto; font-family: 'Sora', sans-serif; overflow: auto; }
+html, body { width: 100%; height: 100%; font-family: 'Sora', sans-serif; overflow: hidden; }
 
 /* ── DECK ────────────────────────────────────────────────────────────────── */
-.deck { width: 100%; height: auto; position: relative; }
+.deck { width: 100vw; height: 100vh; position: relative; overflow: hidden; }
 
 .slide {
-  position: relative;
-  display: block;
-  width: 100%;
-  min-height: 100vh;
-  transform: none;
-  overflow: hidden;
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  transform: translateY(100%);
+  transition: transform 0.45s cubic-bezier(0.65, 0, 0.35, 1);
+  will-change: transform; overflow: hidden;
 }
+.slide.active { transform: translateY(0); }
+.slide.prev   { transform: translateY(-100%); }
+
+/* ── NAV ─────────────────────────────────────────────────────────────────── */
+.nav-dots {
+  position: fixed; bottom: clamp(18px,2.5vw,32px); left: 50%;
+  transform: translateX(-50%); display: flex; gap: 10px; z-index: 100;
+}
+.nav-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: rgba(255,255,255,0.2); border: none; cursor: pointer; padding: 0;
+  transition: background 0.25s, transform 0.25s;
+}
+.nav-dot.active { background: var(--periwinkle); transform: scale(1.3); }
+.nav-dot.on-white { background: rgba(28,28,46,0.18); }
+.nav-dot.on-white.active { background: var(--deep-blue); transform: scale(1.3); }
+
+.nav-arrow {
+  position: fixed; left: 50%; transform: translateX(-50%);
+  z-index: 100;
+  width: clamp(36px,3.5vw,48px); height: clamp(36px,3.5vw,48px);
+  border-radius: 50%; border: 1px solid rgba(255,255,255,0.15);
+  background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.5);
+  font-size: clamp(14px,1.4vw,18px); cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
+  backdrop-filter: blur(4px);
+}
+.nav-arrow:hover { background: rgba(123,123,232,0.2); border-color: rgba(123,123,232,0.4); color: var(--white); }
+.nav-arrow.up   { top:  clamp(12px,1.5vw,24px); }
+.nav-arrow.down { bottom: clamp(52px,6vw,76px); }
+.nav-arrow:disabled { opacity: 0.2; cursor: default; }
+.nav-arrow:disabled:hover { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.15); color: rgba(255,255,255,0.5); }
 
 /* Slide badge */
 .slide-badge {
@@ -1280,12 +1395,10 @@ html, body { width: 100%; height: auto; font-family: 'Sora', sans-serif; overflo
 
 /* RHS — outcome cards */
 .s11-right {
-  display: flex; flex-direction: column; justify-content: flex-start;
+  display: flex; flex-direction: column; justify-content: center;
   padding: clamp(32px,4vw,56px) clamp(40px,5vw,68px);
-  padding-top: clamp(32px,4vw,56px);
   gap: clamp(8px,1vw,13px);
   background: var(--off-white);
-  overflow-y: auto;
 }
 
 .s11-outcomes-label {
@@ -1337,18 +1450,45 @@ html, body { width: 100%; height: auto; font-family: 'Sora', sans-serif; overflo
   --mid-grey:   #4A4A6A;
   --light-grey: #8888A8;
 }
-html, body { width: 100%; height: auto; font-family: 'Sora', sans-serif; overflow: auto; }
+html, body { width: 100%; height: 100%; font-family: 'Sora', sans-serif; overflow: hidden; }
 
 /* ── DECK ── */
-.deck { width: 100%; height: auto; position: relative; }
+.deck { width: 100vw; height: 100vh; position: relative; overflow: hidden; }
 .slide {
-  position: relative;
-  display: block;
-  width: 100%;
-  min-height: 100vh;
-  transform: none;
-  overflow: hidden;
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  transform: translateY(100%);
+  transition: transform 0.45s cubic-bezier(0.65, 0, 0.35, 1);
+  will-change: transform; overflow: hidden;
 }
+.slide.active { transform: translateY(0); }
+.slide.prev   { transform: translateY(-100%); }
+
+/* ── NAV ── */
+.nav-dots {
+  position: fixed; bottom: clamp(18px,2.5vw,32px); left: 50%;
+  transform: translateX(-50%); display: flex; gap: 10px; z-index: 100;
+}
+.nav-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: rgba(28,28,46,0.18); border: none; cursor: pointer; padding: 0;
+  transition: background 0.25s, transform 0.25s;
+}
+.nav-dot.active { background: var(--deep-blue); transform: scale(1.3); }
+
+.nav-arrow {
+  position: fixed; left: 50%; transform: translateX(-50%);
+  z-index: 100; width: clamp(36px,3.5vw,48px); height: clamp(36px,3.5vw,48px);
+  border-radius: 50%; border: 1px solid rgba(26,26,230,0.2);
+  background: rgba(26,26,230,0.06); color: var(--mid-grey);
+  font-size: clamp(14px,1.4vw,18px); cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
+}
+.nav-arrow:hover { background: rgba(26,26,230,0.12); border-color: rgba(26,26,230,0.4); color: var(--deep-blue); }
+.nav-arrow.up   { top:  clamp(12px,1.5vw,24px); }
+.nav-arrow.down { bottom: clamp(52px,6vw,76px); }
+.nav-arrow:disabled { opacity: 0.2; cursor: default; }
+.nav-arrow:disabled:hover { background: rgba(26,26,230,0.06); border-color: rgba(26,26,230,0.2); color: var(--mid-grey); }
 
 /* ── SHARED PILLAR SLIDE LAYOUT ── */
 .pillar-slide {
@@ -1434,12 +1574,10 @@ html, body { width: 100%; height: auto; font-family: 'Sora', sans-serif; overflo
 
 /* RHS */
 .pillar-right {
-  display: flex; flex-direction: column; justify-content: flex-start;
+  display: flex; flex-direction: column; justify-content: center;
   padding: clamp(32px,4vw,56px) clamp(40px,5vw,68px);
-  padding-top: clamp(32px,4vw,56px);
   gap: clamp(8px,1vw,13px);
   background: var(--off-white);
-  overflow-y: auto;
 }
 .outcomes-label {
   font-size: clamp(9px,0.85vw,11px); font-weight: 700; letter-spacing: 0.14em;
@@ -1508,6 +1646,7 @@ html, body { width: 100%; height: auto; font-family: 'Sora', sans-serif; overflo
 .p5-matters .pillar-matters-label { color: var(--dark-navy); }
 .p5-headline .accent { color: var(--dark-navy); }
 .p5-icon { background: rgba(28,28,46,0.06); border: 1px solid rgba(28,28,46,0.12); }
+
 /* ── section_04_complete.html ── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
@@ -1521,18 +1660,45 @@ html, body { width: 100%; height: auto; font-family: 'Sora', sans-serif; overflo
   --mid-grey:   #4A4A6A;
   --light-grey: #8888A8;
 }
-html, body { width: 100%; height: auto; font-family: 'Sora', sans-serif; overflow: auto; }
+html, body { width: 100%; height: 100%; font-family: 'Sora', sans-serif; overflow: hidden; }
 
 /* ── DECK ── */
-.deck { width: 100%; height: auto; position: relative; }
+.deck { width: 100vw; height: 100vh; position: relative; overflow: hidden; }
 .slide {
-  position: relative;
-  display: block;
-  width: 100%;
-  min-height: 100vh;
-  transform: none;
-  overflow: hidden;
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  transform: translateY(100%);
+  transition: transform 0.45s cubic-bezier(0.65, 0, 0.35, 1);
+  will-change: transform; overflow: hidden;
 }
+.slide.active { transform: translateY(0); }
+.slide.prev   { transform: translateY(-100%); }
+
+/* ── NAV ── */
+.nav-dots {
+  position: fixed; bottom: clamp(18px,2.5vw,32px); left: 50%;
+  transform: translateX(-50%); display: flex; gap: 10px; z-index: 100;
+}
+.nav-dot {
+  width: 7px; height: 7px; border-radius: 50%; border: none; cursor: pointer; padding: 0;
+  transition: background 0.25s, transform 0.25s;
+}
+.nav-dot.dark  { background: rgba(28,28,46,0.18); }
+.nav-dot.light { background: rgba(255,255,255,0.25); }
+.nav-dot.active.dark  { background: var(--deep-blue); transform: scale(1.3); }
+.nav-dot.active.light { background: var(--periwinkle); transform: scale(1.3); }
+
+.nav-arrow {
+  position: fixed; left: 50%; transform: translateX(-50%);
+  z-index: 100; width: clamp(36px,3.5vw,48px); height: clamp(36px,3.5vw,48px);
+  border-radius: 50%; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: clamp(14px,1.4vw,18px);
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
+  backdrop-filter: blur(4px);
+}
+.nav-arrow.up   { top: clamp(12px,1.5vw,24px); }
+.nav-arrow.down { bottom: clamp(52px,6vw,76px); }
+.nav-arrow:disabled { opacity: 0.2; cursor: default; }
 
 /* Arrow colours per slide — set via JS */
 .arrow-dark  { border: 1px solid rgba(26,26,230,0.2); background: rgba(26,26,230,0.06); color: var(--mid-grey); }
@@ -1664,55 +1830,15 @@ html, body { width: 100%; height: auto; font-family: 'Sora', sans-serif; overflo
 /* ═══════════════════════════════════════════════════════════════════════════
    SLIDE 17 — GRADE 6: DISCOVER (TABBED)
    ═══════════════════════════════════════════════════════════════════════════ */
-#slide-17, #slide-18, #slide-19, #slide-20 {
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
+#slide-17 {
+  background: var(--white);
+  display: flex; flex-direction: column;
+  height: 100%;
 }
 #slide-17::before {
   content: ''; position: absolute; inset: 0;
   background-image: radial-gradient(circle, rgba(26,26,230,0.05) 1px, transparent 1px);
   background-size: 28px 28px; pointer-events: none; z-index: 0;
-}
-#slide-17 {
-  min-height: 100vh;
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-#slide-17 .top-bar,
-#slide-17 .grade-bar,
-#slide-17 .tab-strip {
-  flex-shrink: 0;
-}
-#slide-17 .tab-panels {
-  flex: 1;
-  min-height: 0;
-  overflow: hidden;
-  position: relative;
-}
-#slide-17 .tab-panel {
-  display: none;
-}
-#slide-17 .tab-panel.active {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  height: 100%;
-  overflow: hidden;
-}
-#slide-17 .tp-col {
-  height: 100%;
-  overflow-y: auto;
-  padding: clamp(24px,3vw,40px) clamp(36px,4.5vw,60px);
-  display: flex;
-  flex-direction: column;
-  gap: clamp(10px,1.2vw,16px);
-  min-height: 0;
-}
-#slide-17 .tp-col::-webkit-scrollbar { width: 4px; }
-#slide-17 .tp-col::-webkit-scrollbar-thumb {
-  background: rgba(26,26,230,0.15); border-radius: 2px;
 }
 
 /* Grade identity bar */
@@ -1769,25 +1895,15 @@ html, body { width: 100%; height: auto; font-family: 'Sora', sans-serif; overflo
 
 /* Tab panels */
 .tab-panels {
-  flex: 1;
-  position: relative;
-  overflow: hidden;
-  min-height: 0;
+  flex: 1; position: relative; z-index: 1; overflow: hidden; min-height: 0;
 }
 .tab-panel {
-  position: absolute;
-  inset: 0;
-  opacity: 0;
-  pointer-events: none;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  overflow: hidden;
+  position: absolute; inset: 0; opacity: 0; pointer-events: none;
   transition: opacity 0.2s ease;
+  display: grid; grid-template-columns: 1fr 1fr;
+  overflow: hidden;
 }
-.tab-panel.active {
-  opacity: 1;
-  pointer-events: auto;
-}
+.tab-panel.active { opacity: 1; pointer-events: auto; }
 
 /* Panel column shared */
 .tp-col {
@@ -1952,24 +2068,49 @@ html, body { width: 100%; height: auto; font-family: 'Sora', sans-serif; overflo
   --mid-grey:   #4A4A6A;
   --light-grey: #8888A8;
 }
-html, body { width: 100%; height: auto; font-family: 'Sora', sans-serif; overflow: auto; }
+html, body { width: 100%; height: 100%; font-family: 'Sora', sans-serif; overflow: hidden; }
 
 /* ── DECK ── */
-.deck { width: 100%; height: auto; position: relative; }
+.deck { width: 100vw; height: 100vh; position: relative; overflow: hidden; }
 .slide {
-  position: relative;
-  display: flex; flex-direction: column;
-  width: 100%;
-  min-height: 100vh;
-  transform: none;
-  overflow: hidden;
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  transform: translateY(100%);
+  transition: transform 0.45s cubic-bezier(0.65, 0, 0.35, 1);
+  will-change: transform; overflow: hidden;
   background: var(--white);
+  display: flex; flex-direction: column;
 }
 .slide::before {
   content: ''; position: absolute; inset: 0;
   background-image: radial-gradient(circle, rgba(26,26,230,0.05) 1px, transparent 1px);
   background-size: 28px 28px; pointer-events: none; z-index: 0;
 }
+.slide.active { transform: translateY(0); }
+.slide.prev   { transform: translateY(-100%); }
+
+/* ── NAV ── */
+.nav-dots {
+  position: fixed; bottom: clamp(18px,2.5vw,32px); left: 50%;
+  transform: translateX(-50%); display: flex; gap: 10px; z-index: 100;
+}
+.nav-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: rgba(28,28,46,0.18); border: none; cursor: pointer; padding: 0;
+  transition: background 0.25s, transform 0.25s;
+}
+.nav-dot.active { background: var(--deep-blue); transform: scale(1.3); }
+.nav-arrow {
+  position: fixed; left: 50%; transform: translateX(-50%); z-index: 100;
+  width: clamp(36px,3.5vw,48px); height: clamp(36px,3.5vw,48px); border-radius: 50%;
+  border: 1px solid rgba(26,26,230,0.2); background: rgba(26,26,230,0.06); color: var(--mid-grey);
+  font-size: clamp(14px,1.4vw,18px); cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
+}
+.nav-arrow:hover { background: rgba(26,26,230,0.12); border-color: rgba(26,26,230,0.4); color: var(--deep-blue); }
+.nav-arrow.up   { top: clamp(12px,1.5vw,24px); }
+.nav-arrow.down { bottom: clamp(52px,6vw,76px); }
+.nav-arrow:disabled { opacity: 0.2; cursor: default; }
 
 .slide-badge {
   position: absolute; bottom: clamp(16px,2vw,28px); right: clamp(20px,2.2vw,32px);
@@ -2001,6 +2142,7 @@ html, body { width: 100%; height: auto; font-family: 'Sora', sans-serif; overflo
 .g9-lr .lr-step-arrow  { color: rgba(26,26,230,0.6); }
 .g9-month { color: rgba(26,26,230,0.65); }
 .g9-overview-body { border-left: 3px solid rgba(26,26,230,0.5); }
+
 /* ── section_05_complete.html ── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
@@ -2014,18 +2156,47 @@ html, body { width: 100%; height: auto; font-family: 'Sora', sans-serif; overflo
   --mid-grey:   #4A4A6A;
   --light-grey: #8888A8;
 }
-html, body { width: 100%; height: auto; font-family: 'Sora', sans-serif; overflow: auto; }
+html, body { width: 100%; height: 100%; font-family: 'Sora', sans-serif; overflow: hidden; }
 
 /* ── DECK ── */
-.deck { width: 100%; height: auto; position: relative; }
+.deck { width: 100vw; height: 100vh; position: relative; overflow: hidden; }
 .slide {
-  position: relative;
-  display: block;
-  width: 100%;
-  min-height: 100vh;
-  transform: none;
-  overflow: hidden;
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  transform: translateY(100%);
+  transition: transform 0.45s cubic-bezier(0.65, 0, 0.35, 1);
+  will-change: transform; overflow: hidden;
 }
+.slide.active { transform: translateY(0); }
+.slide.prev   { transform: translateY(-100%); }
+
+/* ── NAV ── */
+.nav-dots {
+  position: fixed; bottom: clamp(18px,2.5vw,32px); left: 50%;
+  transform: translateX(-50%); display: flex; gap: 10px; z-index: 100;
+}
+.nav-dot {
+  width: 7px; height: 7px; border-radius: 50%; border: none; cursor: pointer; padding: 0;
+  transition: background 0.25s, transform 0.25s;
+}
+.nav-dot.light { background: rgba(255,255,255,0.25); }
+.nav-dot.dark  { background: rgba(28,28,46,0.18); }
+.nav-dot.active.light { background: var(--periwinkle); transform: scale(1.3); }
+.nav-dot.active.dark  { background: var(--deep-blue); transform: scale(1.3); }
+
+.nav-arrow {
+  position: fixed; left: 50%; transform: translateX(-50%); z-index: 100;
+  width: clamp(36px,3.5vw,48px); height: clamp(36px,3.5vw,48px); border-radius: 50%;
+  font-size: clamp(14px,1.4vw,18px); cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.2s, border-color 0.2s, color 0.2s; backdrop-filter: blur(4px);
+}
+.nav-arrow.light { border: 1px solid rgba(255,255,255,0.15); background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.5); }
+.nav-arrow.dark  { border: 1px solid rgba(26,26,230,0.2); background: rgba(26,26,230,0.06); color: var(--mid-grey); }
+.nav-arrow.light:hover { background: rgba(123,123,232,0.2); border-color: rgba(123,123,232,0.4); color: var(--white); }
+.nav-arrow.dark:hover  { background: rgba(26,26,230,0.12); border-color: rgba(26,26,230,0.4); color: var(--deep-blue); }
+.nav-arrow.up   { top: clamp(12px,1.5vw,24px); }
+.nav-arrow.down { bottom: clamp(52px,6vw,76px); }
+.nav-arrow:disabled { opacity: 0.2; cursor: default; }
 
 .slide-badge {
   position: absolute; bottom: clamp(16px,2vw,28px); right: clamp(20px,2.2vw,32px);
@@ -2379,6 +2550,7 @@ html, body { width: 100%; height: auto; font-family: 'Sora', sans-serif; overflo
 .tcl-grade:nth-child(2) { background: rgba(123,123,232,0.12); color: #4444AA; }
 .tcl-grade:nth-child(3) { background: rgba(51,51,204,0.12);   color: #3333AA; }
 .tcl-grade:nth-child(4) { background: rgba(26,26,230,0.12);   color: var(--deep-blue); }
+
 /* ── section_06_complete.html ── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
@@ -2392,18 +2564,47 @@ html, body { width: 100%; height: auto; font-family: 'Sora', sans-serif; overflo
   --mid-grey:   #4A4A6A;
   --light-grey: #8888A8;
 }
-html, body { width: 100%; height: auto; font-family: 'Sora', sans-serif; overflow: auto; }
+html, body { width: 100%; height: 100%; font-family: 'Sora', sans-serif; overflow: hidden; }
 
 /* ── DECK ── */
-.deck { width: 100%; height: auto; position: relative; }
+.deck { width: 100vw; height: 100vh; position: relative; overflow: hidden; }
 .slide {
-  position: relative;
-  display: block;
-  width: 100%;
-  min-height: 100vh;
-  transform: none;
-  overflow: hidden;
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  transform: translateY(100%);
+  transition: transform 0.45s cubic-bezier(0.65, 0, 0.35, 1);
+  will-change: transform; overflow: hidden;
 }
+.slide.active { transform: translateY(0); }
+.slide.prev   { transform: translateY(-100%); }
+
+/* ── NAV ── */
+.nav-dots {
+  position: fixed; bottom: clamp(18px,2.5vw,32px); left: 50%;
+  transform: translateX(-50%); display: flex; gap: 10px; z-index: 100;
+}
+.nav-dot {
+  width: 7px; height: 7px; border-radius: 50%; border: none; cursor: pointer; padding: 0;
+  transition: background 0.25s, transform 0.25s;
+}
+.nav-dot.light { background: rgba(255,255,255,0.25); }
+.nav-dot.dark  { background: rgba(28,28,46,0.18); }
+.nav-dot.active.light { background: var(--periwinkle); transform: scale(1.3); }
+.nav-dot.active.dark  { background: var(--deep-blue); transform: scale(1.3); }
+
+.nav-arrow {
+  position: fixed; left: 50%; transform: translateX(-50%); z-index: 100;
+  width: clamp(36px,3.5vw,48px); height: clamp(36px,3.5vw,48px); border-radius: 50%;
+  font-size: clamp(14px,1.4vw,18px); cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.2s, border-color 0.2s, color 0.2s; backdrop-filter: blur(4px);
+}
+.nav-arrow.light { border: 1px solid rgba(255,255,255,0.15); background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.5); }
+.nav-arrow.dark  { border: 1px solid rgba(26,26,230,0.2); background: rgba(26,26,230,0.06); color: var(--mid-grey); }
+.nav-arrow.light:hover { background: rgba(123,123,232,0.2); border-color: rgba(123,123,232,0.4); color: var(--white); }
+.nav-arrow.dark:hover  { background: rgba(26,26,230,0.12); border-color: rgba(26,26,230,0.4); color: var(--deep-blue); }
+.nav-arrow.up   { top: clamp(12px,1.5vw,24px); }
+.nav-arrow.down { bottom: clamp(52px,6vw,76px); }
+.nav-arrow:disabled { opacity: 0.2; cursor: default; }
 
 .slide-badge {
   position: absolute; bottom: clamp(16px,2vw,28px); right: clamp(20px,2.2vw,32px);
@@ -2731,6 +2932,7 @@ html, body { width: 100%; height: auto; font-family: 'Sora', sans-serif; overflo
 .cert-card-title { font-size: clamp(13px,1.3vw,17px); font-weight: 800; color: var(--dark-navy); margin-bottom: 4px; }
 .cert-card-sub   { font-size: clamp(10px,0.95vw,12px); font-weight: 400; color: var(--mid-grey); line-height: 1.5; }
 .cert-card-sub strong { color: var(--deep-blue); font-weight: 700; }
+
 /* ── section_07_complete.html ── */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -2738,9 +2940,21 @@ html, body { width: 100%; height: auto; font-family: 'Sora', sans-serif; overflo
   --pale-blue:#A0A0F5;--off-white:#F4F4FB;--dark-navy:#1C1C2E;
   --white:#FFFFFF;--mid-grey:#4A4A6A;--light-grey:#8888A8;
 }
-html,body{width:100%;height:auto;font-family:'Sora',sans-serif;overflow:auto}
-.deck{width:100%;height:auto;position:relative}
-.slide{position:relative;display:block;width:100%;min-height:100vh;transform:none;overflow:hidden}
+html,body{width:100%;height:100%;font-family:'Sora',sans-serif;overflow:hidden}
+.deck{width:100vw;height:100vh;position:relative;overflow:hidden}
+.slide{position:absolute;inset:0;width:100%;height:100%;transform:translateY(100%);transition:transform .45s cubic-bezier(.65,0,.35,1);will-change:transform;overflow:hidden}
+.slide.active{transform:translateY(0)}.slide.prev{transform:translateY(-100%)}
+.nav-dots{position:fixed;bottom:clamp(18px,2.5vw,32px);left:50%;transform:translateX(-50%);display:flex;gap:10px;z-index:100}
+.nav-dot{width:7px;height:7px;border-radius:50%;border:none;cursor:pointer;padding:0;transition:background .25s,transform .25s}
+.nav-dot.light{background:rgba(255,255,255,.25)}.nav-dot.dark{background:rgba(28,28,46,.18)}
+.nav-dot.active.light{background:var(--periwinkle);transform:scale(1.3)}.nav-dot.active.dark{background:var(--deep-blue);transform:scale(1.3)}
+.nav-arrow{position:fixed;left:50%;transform:translateX(-50%);z-index:100;width:clamp(36px,3.5vw,48px);height:clamp(36px,3.5vw,48px);border-radius:50%;font-size:clamp(14px,1.4vw,18px);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s,border-color .2s,color .2s;backdrop-filter:blur(4px)}
+.nav-arrow.light{border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.06);color:rgba(255,255,255,.5)}
+.nav-arrow.dark{border:1px solid rgba(26,26,230,.2);background:rgba(26,26,230,.06);color:var(--mid-grey)}
+.nav-arrow.light:hover{background:rgba(123,123,232,.2);border-color:rgba(123,123,232,.4);color:var(--white)}
+.nav-arrow.dark:hover{background:rgba(26,26,230,.12);border-color:rgba(26,26,230,.4);color:var(--deep-blue)}
+.nav-arrow.up{top:clamp(12px,1.5vw,24px)}.nav-arrow.down{bottom:clamp(52px,6vw,76px)}
+.nav-arrow:disabled{opacity:.2;cursor:default}
 .slide-badge{position:absolute;bottom:clamp(16px,2vw,28px);right:clamp(20px,2.2vw,32px);font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;z-index:10}
 .badge-light{color:rgba(255,255,255,.15)}.badge-dark{color:rgba(28,28,46,.22)}
 .top-bar{background:var(--deep-blue);padding:clamp(18px,2.2vw,28px) clamp(48px,5.5vw,80px);display:flex;align-items:center;justify-content:space-between;position:relative;z-index:2;flex-shrink:0}
@@ -2845,292 +3059,723 @@ html,body{width:100%;height:auto;font-family:'Sora',sans-serif;overflow:auto}
 .s31-pg{font-size:clamp(16px,2.2vw,30px);font-weight:300;color:rgba(255,255,255,.5);letter-spacing:.04em}
 .s31-div{width:clamp(40px,5vw,72px);height:2px;margin-top:clamp(8px,1vw,14px);background:linear-gradient(to right,transparent,var(--periwinkle),var(--deep-blue),transparent);border-radius:2px}
 
+/* ── lateral_entry_g7.html ── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --deep-blue:#1A1AE6;--mid-blue:#3333CC;--periwinkle:#7B7BE8;
+  --pale-blue:#A0A0F5;--off-white:#F4F4FB;--dark-navy:#1C1C2E;
+  --white:#FFFFFF;--mid-grey:#4A4A6A;--light-grey:#8888A8;
+}
+html,body{width:100%;height:100%;font-family:'Sora',sans-serif;overflow:hidden}
+.deck{width:100vw;height:100vh;position:relative;overflow:hidden}
+.slide{position:absolute;inset:0;width:100%;height:100%;transform:translateY(100%);transition:transform .45s cubic-bezier(.65,0,.35,1);will-change:transform;overflow:hidden}
+.slide.active{transform:translateY(0)}.slide.prev{transform:translateY(-100%)}
+
+/* ── NAV ── */
+.nav-dots{position:fixed;bottom:clamp(18px,2.5vw,32px);left:50%;transform:translateX(-50%);display:flex;gap:10px;z-index:100}
+.nav-dot{width:7px;height:7px;border-radius:50%;border:none;cursor:pointer;padding:0;transition:background .25s,transform .25s}
+.nav-dot.light{background:rgba(255,255,255,.25)}.nav-dot.dark{background:rgba(28,28,46,.18)}
+.nav-dot.active.light{background:var(--periwinkle);transform:scale(1.3)}.nav-dot.active.dark{background:var(--deep-blue);transform:scale(1.3)}
+.nav-arrow{position:fixed;left:50%;transform:translateX(-50%);z-index:100;width:clamp(36px,3.5vw,48px);height:clamp(36px,3.5vw,48px);border-radius:50%;font-size:clamp(14px,1.4vw,18px);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s,border-color .2s,color .2s;backdrop-filter:blur(4px)}
+.nav-arrow.light{border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.06);color:rgba(255,255,255,.5)}
+.nav-arrow.dark{border:1px solid rgba(26,26,230,.2);background:rgba(26,26,230,.06);color:var(--mid-grey)}
+.nav-arrow.light:hover{background:rgba(123,123,232,.2);border-color:rgba(123,123,232,.4);color:var(--white)}
+.nav-arrow.dark:hover{background:rgba(26,26,230,.12);border-color:rgba(26,26,230,.4);color:var(--deep-blue)}
+.nav-arrow.up{top:clamp(12px,1.5vw,24px)}.nav-arrow.down{bottom:clamp(52px,6vw,76px)}
+.nav-arrow:disabled{opacity:.2;cursor:default}
+.slide-badge{position:absolute;bottom:clamp(16px,2vw,28px);right:clamp(20px,2.2vw,32px);font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;z-index:10}
+.badge-light{color:rgba(255,255,255,.15)}.badge-dark{color:rgba(28,28,46,.22)}
+
+/* ── SHARED COMPONENTS ── */
+.top-bar{background:var(--deep-blue);padding:clamp(18px,2.2vw,28px) clamp(48px,5.5vw,80px);display:flex;align-items:center;justify-content:space-between;position:relative;z-index:2;flex-shrink:0}
+.top-bar-label{font-size:clamp(10px,.95vw,12px);font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--pale-blue);display:flex;align-items:center;gap:12px}
+.top-bar-label::before{content:'';display:block;width:24px;height:2px;background:var(--pale-blue)}
+.top-bar-title{font-size:clamp(13px,1.3vw,17px);font-weight:700;color:var(--white)}
+
+/* Grade bar */
+.grade-bar{display:flex;align-items:center;justify-content:space-between;padding:clamp(10px,1.2vw,16px) clamp(48px,5.5vw,80px);background:var(--off-white);border-bottom:1px solid rgba(26,26,230,.08);flex-shrink:0}
+.grade-label-big{font-size:clamp(22px,2.8vw,38px);font-weight:800;color:var(--dark-navy);letter-spacing:-.02em}
+.grade-bar-left{display:flex;align-items:center;gap:clamp(12px,1.5vw,20px)}
+.grade-theme-badge{padding:clamp(5px,.6vw,8px) clamp(12px,1.4vw,18px);border-radius:100px;background:rgba(123,123,232,.12);border:1px solid rgba(123,123,232,.25);font-size:clamp(11px,1.05vw,13px);font-weight:700;color:#4444AA;letter-spacing:.04em}
+.grade-bar-right{display:flex;align-items:center;gap:clamp(20px,2.5vw,36px)}
+.grade-meta-item{text-align:center}
+.grade-meta-val{font-size:clamp(14px,1.5vw,20px);font-weight:800;color:var(--dark-navy)}
+.grade-meta-label{font-size:clamp(8px,.78vw,10px);font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--light-grey)}
+
+/* Tab strip */
+.tab-strip{display:flex;gap:0;padding:0 clamp(48px,5.5vw,80px);background:var(--white);border-bottom:2px solid rgba(26,26,230,.08);flex-shrink:0}
+.tab-btn{padding:clamp(10px,1.2vw,16px) clamp(16px,2vw,28px);font-family:'Sora',sans-serif;font-size:clamp(12px,1.15vw,15px);font-weight:600;color:var(--light-grey);background:none;border:none;border-bottom:3px solid transparent;cursor:pointer;transition:color .2s,border-color .2s;margin-bottom:-2px}
+.tab-btn.active{color:var(--deep-blue);border-bottom-color:var(--deep-blue)}
+.tab-btn:hover:not(.active){color:var(--mid-grey)}
+
+/* Tab panels */
+.tab-panels{flex:1;position:relative;overflow:hidden;min-height:0}
+.tab-panel{display:none;grid-template-columns:1fr 1fr;height:100%;overflow:hidden}
+.tab-panel.active{display:grid}
+.tp-col{height:100%;overflow-y:auto;padding:clamp(24px,3vw,40px) clamp(36px,4.5vw,56px);display:flex;flex-direction:column;gap:clamp(10px,1.2vw,16px)}
+.tp-col::-webkit-scrollbar{width:3px}.tp-col::-webkit-scrollbar-thumb{background:rgba(26,26,230,.15);border-radius:2px}
+.tp-col-right{background:var(--off-white);border-left:1px solid rgba(26,26,230,.08)}
+.tp-section-label{font-size:clamp(9px,.85vw,11px);font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--light-grey);flex-shrink:0}
+
+/* Unit cards */
+.unit-card{border:1px solid rgba(26,26,230,.08);border-radius:12px;background:var(--white);padding:clamp(12px,1.4vw,18px) clamp(14px,1.6vw,20px)}
+.unit-header{display:flex;align-items:flex-start;gap:10px;margin-bottom:8px}
+.unit-num{width:clamp(24px,2.4vw,32px);height:clamp(24px,2.4vw,32px);border-radius:8px;background:rgba(26,26,230,.1);display:flex;align-items:center;justify-content:center;font-size:clamp(11px,1.05vw,13px);font-weight:800;color:var(--deep-blue);flex-shrink:0}
+.unit-name{font-size:clamp(13px,1.3vw,16px);font-weight:800;color:var(--dark-navy);line-height:1.2}
+.unit-pillar{font-size:clamp(10px,.95vw,12px);color:var(--light-grey);margin-top:2px}
+.unit-desc{font-size:clamp(11px,1.05vw,13px);color:var(--mid-grey);line-height:1.55}
+.unit-desc strong{color:var(--dark-navy);font-weight:700}
+.month-marker{font-size:clamp(9px,.85vw,10px);font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--periwinkle);margin-top:4px}
+
+/* ═══ SLIDE L7-01 — BREAKER ═══════════════════════════════════════════════ */
+#slide-L7-01{background:var(--dark-navy);display:flex;flex-direction:column;justify-content:center;align-items:flex-start;padding:clamp(60px,8vw,120px)}
+#slide-L7-01::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.02) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.02) 1px,transparent 1px);background-size:60px 60px;pointer-events:none}
+.l7-bg-num{position:absolute;right:clamp(40px,6vw,80px);top:50%;transform:translateY(-50%);font-size:clamp(200px,28vw,360px);font-weight:800;line-height:1;color:rgba(255,255,255,.03);letter-spacing:-.05em;pointer-events:none;user-select:none}
+.l7-accent-line{position:absolute;right:0;top:0;bottom:0;width:4px;background:linear-gradient(to bottom,transparent,var(--periwinkle) 40%,var(--deep-blue) 70%,transparent)}
+.l7-content{position:relative;z-index:2}
+.l7-kicker{font-size:clamp(10px,.95vw,12px);font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--periwinkle);display:flex;align-items:center;gap:12px;margin-bottom:clamp(16px,2vw,28px)}
+.l7-kicker::before{content:'';display:block;width:40px;height:2px;background:var(--periwinkle)}
+.l7-title{font-size:clamp(44px,7.5vw,112px);font-weight:800;line-height:.92;letter-spacing:-.04em;color:var(--white);margin-bottom:clamp(20px,2.5vw,36px)}
+.l7-title .ac{color:var(--pale-blue)}
+.l7-valueprop{font-size:clamp(15px,1.7vw,22px);font-weight:300;color:rgba(255,255,255,.6);line-height:1.5;max-width:600px;margin-bottom:clamp(24px,3vw,40px)}
+.l7-valueprop strong{color:rgba(255,255,255,.85);font-weight:700}
+.l7-chips{display:flex;gap:clamp(8px,1vw,14px);flex-wrap:wrap}
+.l7-chip{padding:clamp(7px,.8vw,10px) clamp(14px,1.6vw,22px);border-radius:100px;font-size:clamp(11px,1vw,13px);font-weight:600;letter-spacing:.03em}
+.l7-chip:nth-child(1){background:rgba(160,160,245,.1);color:#A0A0F5;border:1px solid rgba(160,160,245,.2)}
+.l7-chip:nth-child(2){background:rgba(123,123,232,.1);color:#A0A0F5;border:1px solid rgba(123,123,232,.2)}
+.l7-chip:nth-child(3){background:rgba(26,26,230,.14);color:var(--pale-blue);border:1px solid rgba(26,26,230,.28)}
+
+/* ═══ SLIDE L7-02 — CURRICULUM (TABBED) ═══════════════════════════════════ */
+#slide-L7-02{background:var(--white);display:grid;grid-template-rows:auto auto auto 1fr}
+#slide-L7-02::before{content:'';position:absolute;inset:0;background-image:radial-gradient(circle,rgba(26,26,230,.05) 1px,transparent 1px);background-size:28px 28px;pointer-events:none;z-index:0}
+#slide-L7-02 .top-bar,#slide-L7-02 .grade-bar,#slide-L7-02 .tab-strip{position:relative;z-index:2}
+#slide-L7-02 .tab-panels{position:relative;z-index:1}
+
+/* Structure tab */
+.session-track-wrap{display:flex;flex-direction:column;gap:clamp(8px,1vw,14px)}
+.session-track-label{font-size:clamp(9px,.85vw,11px);font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--light-grey)}
+.session-track{display:flex;gap:3px;align-items:stretch;height:clamp(32px,3.5vw,44px);border-radius:8px;overflow:hidden}
+.track-seg{display:flex;align-items:center;justify-content:center;font-size:clamp(9px,.85vw,10px);font-weight:700;letter-spacing:.04em;text-transform:uppercase;transition:opacity .2s}
+.seg-found{background:var(--deep-blue);color:var(--white);flex:6}
+.seg-core{background:var(--periwinkle);color:var(--white);flex:20}
+.seg-close{background:rgba(136,136,168,.35);color:var(--dark-navy);flex:2}
+.track-legend{display:flex;gap:clamp(16px,2vw,28px);flex-wrap:wrap}
+.tl-item{display:flex;align-items:center;gap:8px}
+.tl-dot{width:10px;height:10px;border-radius:3px;flex-shrink:0}
+.tl-label{font-size:clamp(11px,1.05vw,13px);color:var(--mid-grey)}
+.tl-label strong{color:var(--dark-navy);font-weight:700}
+.stats-row{display:flex;gap:clamp(12px,1.5vw,20px);margin-top:4px}
+.stat-box{flex:1;padding:clamp(10px,1.2vw,16px);border-radius:10px;background:rgba(26,26,230,.04);border:1px solid rgba(26,26,230,.1);text-align:center}
+.stat-val{font-size:clamp(18px,2vw,26px);font-weight:800;color:var(--deep-blue);line-height:1}
+.stat-lbl{font-size:clamp(9px,.85vw,10px);font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--light-grey);margin-top:4px}
+
+/* Foundations tab */
+.found-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:clamp(10px,1.2vw,16px);height:100%;align-content:start}
+.found-block{border-radius:12px;border:1px solid rgba(26,26,230,.12);background:var(--white);padding:clamp(14px,1.6vw,20px);display:flex;flex-direction:column;gap:8px}
+.fb-header{display:flex;align-items:center;gap:10px}
+.fb-num{width:clamp(28px,2.8vw,36px);height:clamp(28px,2.8vw,36px);border-radius:9px;background:var(--deep-blue);display:flex;align-items:center;justify-content:center;font-size:clamp(10px,1vw,13px);font-weight:800;color:var(--white);flex-shrink:0}
+.fb-title{font-size:clamp(13px,1.3vw,16px);font-weight:800;color:var(--dark-navy)}
+.fb-sessions{font-size:clamp(10px,.95vw,12px);color:var(--periwinkle);font-weight:700}
+.fb-items{display:flex;flex-direction:column;gap:5px;flex:1}
+.fb-item{font-size:clamp(11px,1.05vw,13px);color:var(--mid-grey);line-height:1.45;display:flex;align-items:flex-start;gap:6px}
+.fb-item::before{content:'→';color:var(--deep-blue);font-size:11px;flex-shrink:0;margin-top:1px}
+.fb-unlocks{margin-top:auto;padding:clamp(7px,.8vw,10px) clamp(10px,1.2vw,14px);border-radius:8px;background:rgba(26,26,230,.06);border:1px solid rgba(26,26,230,.1);font-size:clamp(10px,.95vw,12px);color:var(--deep-blue);font-weight:600}
+
+/* Canva project tab */
+.brief-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:clamp(10px,1.2vw,16px);height:100%;align-content:start}
+.brief-card{border-radius:12px;border:1px solid rgba(26,26,230,.1);background:var(--white);padding:clamp(14px,1.6vw,20px);display:flex;flex-direction:column;gap:10px;position:relative;overflow:hidden}
+.brief-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.brief-card:nth-child(1)::before{background:var(--pale-blue)}
+.brief-card:nth-child(2)::before{background:var(--periwinkle)}
+.brief-card:nth-child(3)::before{background:var(--deep-blue)}
+.brief-label{font-size:clamp(9px,.85vw,10px);font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--light-grey)}
+.brief-name{font-size:clamp(15px,1.6vw,20px);font-weight:800;color:var(--dark-navy)}
+.brief-scope{font-size:clamp(11px,1.05vw,13px);font-weight:600;color:var(--periwinkle)}
+.brief-items{display:flex;flex-direction:column;gap:5px;flex:1}
+.brief-item{font-size:clamp(11px,1.05vw,13px);color:var(--mid-grey);line-height:1.45;display:flex;align-items:flex-start;gap:6px}
+.brief-item::before{content:'·';color:var(--periwinkle);font-weight:800;flex-shrink:0}
+.brief-for{margin-top:auto;font-size:clamp(10px,.95vw,12px);color:var(--mid-grey);font-style:italic;border-top:1px solid rgba(26,26,230,.08);padding-top:8px}
+
+/* ═══ SLIDE L7-03 — TOOLS ═════════════════════════════════════════════════ */
+#slide-L7-03{background:var(--white);display:grid;grid-template-rows:auto 1fr}
+#slide-L7-03::before{content:'';position:absolute;inset:0;background-image:radial-gradient(circle,rgba(26,26,230,.05) 1px,transparent 1px);background-size:28px 28px;pointer-events:none;z-index:0}
+.l7-tools-body{position:relative;z-index:1;display:flex;flex-direction:column;padding:clamp(28px,3.5vw,44px) clamp(48px,5.5vw,80px) clamp(44px,5.5vw,60px);gap:clamp(20px,2.5vw,32px);justify-content:center}
+.l7-tools-intro{display:flex;align-items:center;justify-content:space-between}
+.l7-tools-headline{font-size:clamp(20px,2.5vw,34px);font-weight:800;color:var(--dark-navy);letter-spacing:-.02em}
+.l7-tools-headline .ac{color:var(--deep-blue)}
+.same-badge-global{padding:clamp(8px,1vw,12px) clamp(16px,2vw,24px);border-radius:100px;background:rgba(26,180,100,.1);border:1px solid rgba(26,180,100,.3);font-size:clamp(11px,1.05vw,14px);font-weight:700;color:#1A7A4A;display:flex;align-items:center;gap:8px}
+.same-badge-global::before{content:'✓';font-size:clamp(13px,1.3vw,16px)}
+.tools-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:clamp(10px,1.2vw,16px)}
+.tool-card-l7{border-radius:14px;border:1px solid rgba(26,26,230,.08);background:var(--white);padding:clamp(16px,1.8vw,22px) clamp(14px,1.6vw,20px);display:flex;flex-direction:column;gap:clamp(8px,1vw,12px);position:relative;overflow:hidden;transition:border-color .2s,box-shadow .2s}
+.tool-card-l7:hover{border-color:rgba(26,26,230,.2);box-shadow:0 4px 20px rgba(26,26,230,.06)}
+.tool-card-l7::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--deep-blue)}
+.tc-icon-wrap{width:clamp(36px,3.6vw,48px);height:clamp(36px,3.6vw,48px);border-radius:10px;background:rgba(26,26,230,.08);display:flex;align-items:center;justify-content:center;font-size:clamp(16px,1.8vw,22px)}
+.tc-name{font-size:clamp(13px,1.3vw,16px);font-weight:800;color:var(--dark-navy);line-height:1.2}
+.tc-cat{font-size:clamp(9px,.85vw,11px);font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--light-grey);margin-top:1px}
+.tc-session{font-size:clamp(10px,.95vw,12px);color:var(--periwinkle);font-weight:600}
+.tc-same{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:100px;background:rgba(26,180,100,.1);border:1px solid rgba(26,180,100,.25);font-size:clamp(9px,.85vw,10px);font-weight:700;color:#1A7A4A;margin-top:auto}
+.tc-same::before{content:'✓'}
+
+/* ═══ SLIDE L7-04 — COMPETENCIES + ASSESSMENT ════════════════════════════ */
+#slide-L7-04{background:var(--white);display:grid;grid-template-rows:auto 1fr}
+#slide-L7-04::before{content:'';position:absolute;inset:0;background-image:radial-gradient(circle,rgba(26,26,230,.05) 1px,transparent 1px);background-size:28px 28px;pointer-events:none;z-index:0}
+.l7-ca-body{display:grid;grid-template-columns:1fr 1fr;position:relative;z-index:1;overflow:hidden}
+.l7-ca-left{display:flex;flex-direction:column;padding:clamp(24px,3vw,40px) clamp(36px,4.5vw,56px) clamp(44px,5.5vw,56px);gap:clamp(10px,1.2vw,16px);border-right:1px solid rgba(26,26,230,.08);overflow-y:auto}
+.l7-ca-left::-webkit-scrollbar{width:3px}.l7-ca-left::-webkit-scrollbar-thumb{background:rgba(26,26,230,.15);border-radius:2px}
+.l7-ca-right{background:var(--off-white);display:flex;flex-direction:column;padding:clamp(24px,3vw,40px) clamp(36px,4.5vw,56px) clamp(44px,5.5vw,56px);gap:clamp(12px,1.4vw,18px);overflow-y:auto}
+.l7-ca-right::-webkit-scrollbar{width:3px}.l7-ca-right::-webkit-scrollbar-thumb{background:rgba(26,26,230,.15);border-radius:2px}
+.section-label{font-size:clamp(9px,.85vw,11px);font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--light-grey);flex-shrink:0}
+
+/* Competency rows */
+.comp-row{display:flex;align-items:flex-start;gap:10px;padding:clamp(10px,1.2vw,14px) clamp(12px,1.4vw,18px);border-radius:10px;border:1px solid rgba(26,26,230,.08);background:var(--white)}
+.comp-pill{flex-shrink:0;padding:3px 10px;border-radius:100px;font-size:clamp(8px,.78vw,9px);font-weight:700;letter-spacing:.06em;text-transform:uppercase;white-space:nowrap;margin-top:2px}
+.pill-same{background:rgba(26,180,100,.1);border:1px solid rgba(26,180,100,.25);color:#1A7A4A}
+.pill-adj{background:rgba(184,92,0,.1);border:1px solid rgba(184,92,0,.25);color:#8B4500}
+.comp-text-wrap{}
+.comp-text{font-size:clamp(11px,1.05vw,13px);font-weight:600;color:var(--dark-navy);line-height:1.4;margin-bottom:3px}
+.comp-adj-note{font-size:clamp(10px,.95vw,12px);color:var(--mid-grey);line-height:1.45}
+.comp-adj-note strong{color:var(--dark-navy);font-weight:700}
+
+/* Assessment items */
+.assess-list{display:flex;flex-direction:column;gap:clamp(6px,.7vw,9px)}
+.assess-item{display:flex;align-items:center;gap:10px;padding:clamp(8px,1vw,12px) clamp(12px,1.4vw,16px);border-radius:9px;background:var(--white);border:1px solid rgba(26,26,230,.08)}
+.assess-tag{flex-shrink:0;padding:3px 9px;border-radius:100px;font-size:clamp(8px,.78vw,9px);font-weight:700;letter-spacing:.04em;text-transform:uppercase;white-space:nowrap}
+.at-quiz{background:rgba(123,123,232,.1);color:#4444BB;border:1px solid rgba(123,123,232,.2)}
+.at-test{background:rgba(26,26,230,.1);color:var(--deep-blue);border:1px solid rgba(26,26,230,.2)}
+.at-port{background:rgba(51,51,204,.08);color:var(--mid-blue);border:1px solid rgba(51,51,204,.18)}
+.at-show{background:rgba(28,28,46,.08);color:var(--dark-navy);border:1px solid rgba(28,28,46,.15)}
+.assess-label{font-size:clamp(11px,1.05vw,13px);font-weight:600;color:var(--dark-navy)}
+.assess-sub{font-size:clamp(10px,.95vw,12px);color:var(--mid-grey);line-height:1.4;margin-top:1px}
+
+/* Badge callout */
+.badge-callout{padding:clamp(14px,1.6vw,20px) clamp(16px,1.8vw,24px);border-radius:12px;border:2px solid rgba(26,26,230,.2);background:rgba(26,26,230,.04)}
+.bc-top{display:flex;align-items:center;gap:12px;margin-bottom:8px}
+.bc-icon{font-size:clamp(22px,2.4vw,30px);flex-shrink:0}
+.bc-name{font-size:clamp(14px,1.4vw,18px);font-weight:800;color:var(--dark-navy)}
+.bc-body{font-size:clamp(11px,1.05vw,13px);color:var(--mid-grey);line-height:1.6}
+.bc-body strong{color:var(--dark-navy);font-weight:700}
+.bc-quote{margin-top:10px;padding:clamp(8px,1vw,12px) clamp(12px,1.4vw,16px);border-left:3px solid var(--deep-blue);background:rgba(26,26,230,.04);font-size:clamp(11px,1.05vw,13px);color:var(--mid-grey);font-style:italic;line-height:1.55}
+
+/* ── lateral_entry_g8.html ── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --deep-blue:#1A1AE6;--mid-blue:#3333CC;--periwinkle:#7B7BE8;
+  --pale-blue:#A0A0F5;--off-white:#F4F4FB;--dark-navy:#1C1C2E;
+  --white:#FFFFFF;--mid-grey:#4A4A6A;--light-grey:#8888A8;
+}
+html,body{width:100%;height:100%;font-family:'Sora',sans-serif;overflow:hidden}
+.deck{width:100vw;height:100vh;position:relative;overflow:hidden}
+.slide{position:absolute;inset:0;width:100%;height:100%;transform:translateY(100%);transition:transform .45s cubic-bezier(.65,0,.35,1);will-change:transform;overflow:hidden}
+.slide.active{transform:translateY(0)}.slide.prev{transform:translateY(-100%)}
+
+.nav-dots{position:fixed;bottom:clamp(18px,2.5vw,32px);left:50%;transform:translateX(-50%);display:flex;gap:10px;z-index:100}
+.nav-dot{width:7px;height:7px;border-radius:50%;border:none;cursor:pointer;padding:0;transition:background .25s,transform .25s}
+.nav-dot.light{background:rgba(255,255,255,.25)}.nav-dot.dark{background:rgba(28,28,46,.18)}
+.nav-dot.active.light{background:var(--periwinkle);transform:scale(1.3)}.nav-dot.active.dark{background:var(--deep-blue);transform:scale(1.3)}
+.nav-arrow{position:fixed;left:50%;transform:translateX(-50%);z-index:100;width:clamp(36px,3.5vw,48px);height:clamp(36px,3.5vw,48px);border-radius:50%;font-size:clamp(14px,1.4vw,18px);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s,border-color .2s,color .2s;backdrop-filter:blur(4px)}
+.nav-arrow.light{border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.06);color:rgba(255,255,255,.5)}
+.nav-arrow.dark{border:1px solid rgba(26,26,230,.2);background:rgba(26,26,230,.06);color:var(--mid-grey)}
+.nav-arrow.light:hover{background:rgba(123,123,232,.2);border-color:rgba(123,123,232,.4);color:var(--white)}
+.nav-arrow.dark:hover{background:rgba(26,26,230,.12);border-color:rgba(26,26,230,.4);color:var(--deep-blue)}
+.nav-arrow.up{top:clamp(12px,1.5vw,24px)}.nav-arrow.down{bottom:clamp(52px,6vw,76px)}
+.nav-arrow:disabled{opacity:.2;cursor:default}
+.slide-badge{position:absolute;bottom:clamp(16px,2vw,28px);right:clamp(20px,2.2vw,32px);font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;z-index:10}
+.badge-light{color:rgba(255,255,255,.15)}.badge-dark{color:rgba(28,28,46,.22)}
+
+/* ── SHARED ── */
+.top-bar{background:var(--deep-blue);padding:clamp(18px,2.2vw,28px) clamp(48px,5.5vw,80px);display:flex;align-items:center;justify-content:space-between;position:relative;z-index:2;flex-shrink:0}
+.top-bar-label{font-size:clamp(10px,.95vw,12px);font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--pale-blue);display:flex;align-items:center;gap:12px}
+.top-bar-label::before{content:'';display:block;width:24px;height:2px;background:var(--pale-blue)}
+.top-bar-title{font-size:clamp(13px,1.3vw,17px);font-weight:700;color:var(--white)}
+
+.grade-bar{display:flex;align-items:center;justify-content:space-between;padding:clamp(10px,1.2vw,16px) clamp(48px,5.5vw,80px);background:var(--off-white);border-bottom:1px solid rgba(26,26,230,.08);flex-shrink:0}
+.grade-label-big{font-size:clamp(22px,2.8vw,38px);font-weight:800;color:var(--dark-navy);letter-spacing:-.02em}
+.grade-bar-left{display:flex;align-items:center;gap:clamp(12px,1.5vw,20px)}
+.grade-theme-badge{padding:clamp(5px,.6vw,8px) clamp(12px,1.4vw,18px);border-radius:100px;background:rgba(51,51,204,.12);border:1px solid rgba(51,51,204,.25);font-size:clamp(11px,1.05vw,13px);font-weight:700;color:#3333AA;letter-spacing:.04em}
+.grade-bar-right{display:flex;align-items:center;gap:clamp(20px,2.5vw,36px)}
+.grade-meta-item{text-align:center}
+.grade-meta-val{font-size:clamp(14px,1.5vw,20px);font-weight:800;color:var(--dark-navy)}
+.grade-meta-label{font-size:clamp(8px,.78vw,10px);font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--light-grey)}
+
+.tab-strip{display:flex;gap:0;padding:0 clamp(48px,5.5vw,80px);background:var(--white);border-bottom:2px solid rgba(26,26,230,.08);flex-shrink:0}
+.tab-btn{padding:clamp(10px,1.2vw,16px) clamp(16px,2vw,28px);font-family:'Sora',sans-serif;font-size:clamp(12px,1.15vw,15px);font-weight:600;color:var(--light-grey);background:none;border:none;border-bottom:3px solid transparent;cursor:pointer;transition:color .2s,border-color .2s;margin-bottom:-2px}
+.tab-btn.active{color:var(--deep-blue);border-bottom-color:var(--deep-blue)}
+.tab-btn:hover:not(.active){color:var(--mid-grey)}
+
+.tab-panels{flex:1;position:relative;overflow:hidden;min-height:0}
+.tab-panel{display:none;grid-template-columns:1fr 1fr;height:100%;overflow:hidden}
+.tab-panel.active{display:grid}
+.tab-panel.full-width{grid-template-columns:1fr}
+.tp-col{height:100%;overflow-y:auto;padding:clamp(20px,2.5vw,32px) clamp(32px,4vw,52px);display:flex;flex-direction:column;gap:clamp(8px,1vw,14px)}
+.tp-col::-webkit-scrollbar{width:3px}.tp-col::-webkit-scrollbar-thumb{background:rgba(26,26,230,.15);border-radius:2px}
+.tp-col-right{background:var(--off-white);border-left:1px solid rgba(26,26,230,.08)}
+.tp-section-label{font-size:clamp(9px,.85vw,11px);font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--light-grey);flex-shrink:0}
+
+.unit-card{border:1px solid rgba(26,26,230,.08);border-radius:12px;background:var(--white);padding:clamp(10px,1.2vw,16px) clamp(12px,1.4vw,18px)}
+.unit-header{display:flex;align-items:flex-start;gap:10px;margin-bottom:6px}
+.unit-num{width:clamp(22px,2.2vw,30px);height:clamp(22px,2.2vw,30px);border-radius:7px;background:rgba(26,26,230,.1);display:flex;align-items:center;justify-content:center;font-size:clamp(10px,1vw,12px);font-weight:800;color:var(--deep-blue);flex-shrink:0}
+.unit-name{font-size:clamp(12px,1.2vw,15px);font-weight:800;color:var(--dark-navy);line-height:1.2}
+.unit-pillar{font-size:clamp(9px,.9vw,11px);color:var(--light-grey);margin-top:2px}
+.unit-desc{font-size:clamp(10px,.95vw,12px);color:var(--mid-grey);line-height:1.5}
+.unit-desc strong{color:var(--dark-navy);font-weight:700}
+.month-marker{font-size:clamp(9px,.85vw,10px);font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--periwinkle)}
+.unit-adj{display:inline-flex;align-items:center;gap:5px;margin-top:5px;padding:2px 9px;border-radius:100px;background:rgba(184,92,0,.08);border:1px solid rgba(184,92,0,.2);font-size:clamp(9px,.85vw,10px);font-weight:700;color:#8B4500}
+
+/* ═══ SLIDE L8-01 ══════════════════════════════════════════════════════════ */
+#slide-L8-01{background:var(--dark-navy);display:flex;flex-direction:column;justify-content:center;align-items:flex-start;padding:clamp(60px,8vw,120px)}
+#slide-L8-01::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.02) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.02) 1px,transparent 1px);background-size:60px 60px;pointer-events:none}
+.l8-bg-num{position:absolute;right:clamp(40px,6vw,80px);top:50%;transform:translateY(-50%);font-size:clamp(200px,28vw,360px);font-weight:800;line-height:1;color:rgba(255,255,255,.03);letter-spacing:-.05em;pointer-events:none;user-select:none}
+.l8-accent{position:absolute;right:0;top:0;bottom:0;width:4px;background:linear-gradient(to bottom,transparent,var(--periwinkle) 40%,var(--deep-blue) 70%,transparent)}
+.l8-content{position:relative;z-index:2}
+.l8-kicker{font-size:clamp(10px,.95vw,12px);font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--periwinkle);display:flex;align-items:center;gap:12px;margin-bottom:clamp(16px,2vw,28px)}
+.l8-kicker::before{content:'';display:block;width:40px;height:2px;background:var(--periwinkle)}
+.l8-title{font-size:clamp(44px,7.5vw,112px);font-weight:800;line-height:.92;letter-spacing:-.04em;color:var(--white);margin-bottom:clamp(20px,2.5vw,36px)}
+.l8-title .ac{color:var(--pale-blue)}
+.l8-vp{font-size:clamp(15px,1.7vw,22px);font-weight:300;color:rgba(255,255,255,.6);line-height:1.55;max-width:640px;margin-bottom:clamp(24px,3vw,40px)}
+.l8-vp strong{color:rgba(255,255,255,.85);font-weight:700}
+.l8-chips{display:flex;gap:clamp(8px,1vw,14px);flex-wrap:wrap}
+.l8-chip{padding:clamp(7px,.8vw,10px) clamp(14px,1.6vw,22px);border-radius:100px;font-size:clamp(11px,1vw,13px);font-weight:600;letter-spacing:.03em}
+.l8-chip:nth-child(1){background:rgba(160,160,245,.1);color:#A0A0F5;border:1px solid rgba(160,160,245,.2)}
+.l8-chip:nth-child(2){background:rgba(123,123,232,.1);color:#A0A0F5;border:1px solid rgba(123,123,232,.2)}
+.l8-chip:nth-child(3){background:rgba(26,26,230,.14);color:var(--pale-blue);border:1px solid rgba(26,26,230,.28)}
+
+/* ═══ SLIDE L8-02 ══════════════════════════════════════════════════════════ */
+#slide-L8-02{background:var(--white);display:grid;grid-template-rows:auto auto auto 1fr}
+#slide-L8-02::before{content:'';position:absolute;inset:0;background-image:radial-gradient(circle,rgba(26,26,230,.05) 1px,transparent 1px);background-size:28px 28px;pointer-events:none;z-index:0}
+#slide-L8-02 .top-bar,#slide-L8-02 .grade-bar,#slide-L8-02 .tab-strip{position:relative;z-index:2}
+#slide-L8-02 .tab-panels{position:relative;z-index:1}
+
+/* Session track */
+.session-track-wrap{display:flex;flex-direction:column;gap:clamp(8px,1vw,14px)}
+.session-track{display:flex;gap:3px;align-items:stretch;height:clamp(32px,3.5vw,44px);border-radius:8px;overflow:hidden}
+.track-seg{display:flex;align-items:center;justify-content:center;font-size:clamp(9px,.85vw,10px);font-weight:700;letter-spacing:.04em;text-transform:uppercase}
+.seg-found{background:var(--deep-blue);color:var(--white);flex:8}
+.seg-core{background:var(--periwinkle);color:var(--white);flex:18}
+.seg-close{background:rgba(136,136,168,.35);color:var(--dark-navy);flex:2}
+.track-legend{display:flex;gap:clamp(14px,1.8vw,24px);flex-wrap:wrap}
+.tl-item{display:flex;align-items:center;gap:8px}
+.tl-dot{width:10px;height:10px;border-radius:3px;flex-shrink:0}
+.tl-label{font-size:clamp(11px,1.05vw,13px);color:var(--mid-grey)}
+.tl-label strong{color:var(--dark-navy);font-weight:700}
+.stats-row{display:flex;gap:clamp(10px,1.2vw,18px)}
+.stat-box{flex:1;padding:clamp(10px,1.2vw,16px);border-radius:10px;background:rgba(26,26,230,.04);border:1px solid rgba(26,26,230,.1);text-align:center}
+.stat-val{font-size:clamp(18px,2vw,26px);font-weight:800;color:var(--deep-blue);line-height:1}
+.stat-lbl{font-size:clamp(9px,.85vw,10px);font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--light-grey);margin-top:4px}
+
+/* Foundations blocks */
+.found-grid-2x2{display:grid;grid-template-columns:1fr 1fr;gap:clamp(8px,1vw,14px);height:100%;align-content:start}
+.found-block{border-radius:12px;border:1px solid rgba(26,26,230,.12);background:var(--white);padding:clamp(12px,1.4vw,18px);display:flex;flex-direction:column;gap:7px}
+.fb-header{display:flex;align-items:center;gap:10px}
+.fb-num{width:clamp(26px,2.6vw,34px);height:clamp(26px,2.6vw,34px);border-radius:9px;background:var(--deep-blue);display:flex;align-items:center;justify-content:center;font-size:clamp(10px,1vw,12px);font-weight:800;color:var(--white);flex-shrink:0}
+.fb-title{font-size:clamp(12px,1.2vw,15px);font-weight:800;color:var(--dark-navy)}
+.fb-sessions{font-size:clamp(10px,.95vw,12px);color:var(--periwinkle);font-weight:700}
+.fb-items{display:flex;flex-direction:column;gap:4px;flex:1}
+.fb-item{font-size:clamp(10px,.95vw,12px);color:var(--mid-grey);line-height:1.45;display:flex;align-items:flex-start;gap:6px}
+.fb-item::before{content:'→';color:var(--deep-blue);font-size:10px;flex-shrink:0;margin-top:1px}
+.fb-unlocks{margin-top:auto;padding:clamp(6px,.7vw,9px) clamp(10px,1.2vw,14px);border-radius:8px;background:rgba(26,26,230,.06);border:1px solid rgba(26,26,230,.1);font-size:clamp(10px,.95vw,11px);color:var(--deep-blue);font-weight:600}
+
+/* Mini-project tab */
+.mp-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(10px,1.2vw,18px);align-content:start}
+.mp-card{border-radius:12px;border:1px solid rgba(26,26,230,.1);background:var(--white);padding:clamp(14px,1.6vw,20px);display:flex;flex-direction:column;gap:8px}
+.mp-label{font-size:clamp(9px,.85vw,10px);font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--light-grey)}
+.mp-title{font-size:clamp(14px,1.4vw,18px);font-weight:800;color:var(--dark-navy)}
+.mp-items{display:flex;flex-direction:column;gap:5px}
+.mp-item{font-size:clamp(11px,1.05vw,13px);color:var(--mid-grey);line-height:1.45;display:flex;align-items:flex-start;gap:6px}
+.mp-item::before{content:'·';color:var(--periwinkle);font-weight:800;flex-shrink:0}
+.mp-note{padding:clamp(8px,1vw,12px) clamp(12px,1.4vw,16px);border-radius:8px;background:rgba(26,26,230,.05);border:1px solid rgba(26,26,230,.1);font-size:clamp(10px,.95vw,12px);color:var(--mid-grey);line-height:1.55}
+.mp-note strong{color:var(--dark-navy);font-weight:700}
+.component-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(6px,.7vw,10px)}
+.comp-card{border-radius:9px;border:1px solid rgba(26,26,230,.1);background:var(--off-white);padding:clamp(8px,1vw,12px);text-align:center;font-size:clamp(10px,.95vw,12px);color:var(--mid-grey)}
+.comp-card strong{display:block;font-size:clamp(11px,1.05vw,13px);color:var(--dark-navy);margin-bottom:3px}
+
+/* ═══ SLIDE L8-03 ══════════════════════════════════════════════════════════ */
+#slide-L8-03{background:var(--white);display:grid;grid-template-rows:auto 1fr}
+#slide-L8-03::before{content:'';position:absolute;inset:0;background-image:radial-gradient(circle,rgba(26,26,230,.05) 1px,transparent 1px);background-size:28px 28px;pointer-events:none;z-index:0}
+.l8-tools-body{position:relative;z-index:1;display:flex;flex-direction:column;padding:clamp(20px,2.5vw,32px) clamp(48px,5.5vw,80px) clamp(44px,5.5vw,56px);gap:clamp(16px,2vw,26px);justify-content:center}
+.l8-tools-intro{display:flex;align-items:center;justify-content:space-between}
+.l8-tools-headline{font-size:clamp(20px,2.5vw,34px);font-weight:800;color:var(--dark-navy);letter-spacing:-.02em}
+.l8-tools-headline .ac{color:var(--deep-blue)}
+.same-badge-global{padding:clamp(8px,1vw,12px) clamp(16px,2vw,24px);border-radius:100px;background:rgba(26,180,100,.1);border:1px solid rgba(26,180,100,.3);font-size:clamp(11px,1.05vw,14px);font-weight:700;color:#1A7A4A;display:flex;align-items:center;gap:8px}
+.same-badge-global::before{content:'✓';font-size:clamp(13px,1.3vw,16px)}
+.tools-grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(8px,1vw,14px)}
+.tools-grid-bottom{display:grid;grid-template-columns:repeat(6,1fr);gap:clamp(8px,1vw,14px)}
+.tool-card-l8{border-radius:12px;border:1px solid rgba(26,26,230,.08);background:var(--white);padding:clamp(14px,1.6vw,20px) clamp(12px,1.4vw,18px);display:flex;flex-direction:column;gap:clamp(6px,.7vw,10px);position:relative;overflow:hidden;transition:border-color .2s}
+.tool-card-l8:hover{border-color:rgba(26,26,230,.2)}
+.tool-card-l8::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--deep-blue)}
+.tool-card-sm{border-radius:10px;border:1px solid rgba(26,26,230,.08);background:var(--white);padding:clamp(10px,1.2vw,14px) clamp(10px,1.2vw,14px);display:flex;flex-direction:column;gap:5px;position:relative;overflow:hidden}
+.tool-card-sm::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--periwinkle)}
+.tc-icon{width:clamp(32px,3.2vw,42px);height:clamp(32px,3.2vw,42px);border-radius:9px;background:rgba(26,26,230,.08);display:flex;align-items:center;justify-content:center;font-size:clamp(14px,1.5vw,18px)}
+.tc-name{font-size:clamp(12px,1.2vw,15px);font-weight:800;color:var(--dark-navy);line-height:1.2}
+.tc-name-sm{font-size:clamp(11px,1.05vw,13px);font-weight:800;color:var(--dark-navy);line-height:1.2}
+.tc-cat{font-size:clamp(9px,.85vw,10px);font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--light-grey)}
+.tc-session{font-size:clamp(10px,.95vw,11px);color:var(--periwinkle);font-weight:600}
+.tc-same{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:100px;background:rgba(26,180,100,.1);border:1px solid rgba(26,180,100,.25);font-size:clamp(9px,.85vw,10px);font-weight:700;color:#1A7A4A;margin-top:auto}
+.tc-same::before{content:'✓'}
+.tc-demo{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:100px;background:rgba(136,136,168,.1);border:1px solid rgba(136,136,168,.2);font-size:clamp(9px,.85vw,10px);font-weight:700;color:var(--light-grey)}
+
+/* ═══ SLIDE L8-04 ══════════════════════════════════════════════════════════ */
+#slide-L8-04{background:var(--white);display:grid;grid-template-rows:auto 1fr}
+#slide-L8-04::before{content:'';position:absolute;inset:0;background-image:radial-gradient(circle,rgba(26,26,230,.05) 1px,transparent 1px);background-size:28px 28px;pointer-events:none;z-index:0}
+.l8-ca-body{display:grid;grid-template-columns:1fr 1fr;position:relative;z-index:1;overflow:hidden}
+.l8-ca-left{display:flex;flex-direction:column;padding:clamp(22px,2.8vw,38px) clamp(36px,4.5vw,52px) clamp(44px,5.5vw,56px);gap:clamp(8px,1vw,13px);border-right:1px solid rgba(26,26,230,.08);overflow-y:auto}
+.l8-ca-left::-webkit-scrollbar{width:3px}.l8-ca-left::-webkit-scrollbar-thumb{background:rgba(26,26,230,.15);border-radius:2px}
+.l8-ca-right{background:var(--off-white);display:flex;flex-direction:column;padding:clamp(22px,2.8vw,38px) clamp(36px,4.5vw,52px) clamp(44px,5.5vw,56px);gap:clamp(10px,1.2vw,16px);overflow-y:auto}
+.l8-ca-right::-webkit-scrollbar{width:3px}.l8-ca-right::-webkit-scrollbar-thumb{background:rgba(26,26,230,.15);border-radius:2px}
+.section-label{font-size:clamp(9px,.85vw,11px);font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--light-grey);flex-shrink:0}
+.comp-row{display:flex;align-items:flex-start;gap:10px;padding:clamp(9px,1.1vw,13px) clamp(12px,1.4vw,16px);border-radius:10px;border:1px solid rgba(26,26,230,.08);background:var(--white)}
+.comp-pill{flex-shrink:0;padding:3px 10px;border-radius:100px;font-size:clamp(8px,.78vw,9px);font-weight:700;letter-spacing:.06em;text-transform:uppercase;white-space:nowrap;margin-top:2px}
+.pill-same{background:rgba(26,180,100,.1);border:1px solid rgba(26,180,100,.25);color:#1A7A4A}
+.pill-adj{background:rgba(184,92,0,.1);border:1px solid rgba(184,92,0,.25);color:#8B4500}
+.comp-text{font-size:clamp(11px,1.05vw,13px);font-weight:600;color:var(--dark-navy);line-height:1.4;margin-bottom:3px}
+.comp-adj-note{font-size:clamp(10px,.95vw,12px);color:var(--mid-grey);line-height:1.45}
+.comp-adj-note strong{color:var(--dark-navy);font-weight:700}
+.assess-list{display:flex;flex-direction:column;gap:clamp(5px,.6vw,8px)}
+.assess-item{display:flex;align-items:flex-start;gap:10px;padding:clamp(8px,1vw,11px) clamp(12px,1.4vw,16px);border-radius:9px;background:var(--white);border:1px solid rgba(26,26,230,.08)}
+.assess-tag{flex-shrink:0;padding:3px 9px;border-radius:100px;font-size:clamp(8px,.78vw,9px);font-weight:700;letter-spacing:.04em;text-transform:uppercase;white-space:nowrap;margin-top:1px}
+.at-quiz{background:rgba(123,123,232,.1);color:#4444BB;border:1px solid rgba(123,123,232,.2)}
+.at-test{background:rgba(26,26,230,.1);color:var(--deep-blue);border:1px solid rgba(26,26,230,.2)}
+.at-port{background:rgba(51,51,204,.08);color:var(--mid-blue);border:1px solid rgba(51,51,204,.18)}
+.at-show{background:rgba(28,28,46,.08);color:var(--dark-navy);border:1px solid rgba(28,28,46,.15)}
+.assess-label{font-size:clamp(11px,1.05vw,13px);font-weight:600;color:var(--dark-navy);line-height:1.3}
+.assess-sub{font-size:clamp(10px,.95vw,12px);color:var(--mid-grey);line-height:1.4;margin-top:1px}
+.badge-callout{padding:clamp(14px,1.6vw,20px) clamp(16px,1.8vw,24px);border-radius:12px;border:2px solid rgba(26,26,230,.2);background:rgba(26,26,230,.04)}
+.bc-top{display:flex;align-items:center;gap:12px;margin-bottom:8px}
+.bc-icon{font-size:clamp(22px,2.4vw,30px);flex-shrink:0}
+.bc-name{font-size:clamp(14px,1.4vw,18px);font-weight:800;color:var(--dark-navy)}
+.bc-body{font-size:clamp(11px,1.05vw,13px);color:var(--mid-grey);line-height:1.6}
+.bc-body strong{color:var(--dark-navy);font-weight:700}
+.bc-quote{margin-top:10px;padding:clamp(8px,1vw,12px) clamp(12px,1.4vw,16px);border-left:3px solid var(--deep-blue);background:rgba(26,26,230,.04);font-size:clamp(11px,1.05vw,13px);color:var(--mid-grey);font-style:italic;line-height:1.55}
+.tcl-note{padding:clamp(10px,1.2vw,16px) clamp(14px,1.6vw,20px);border-radius:10px;background:rgba(26,26,230,.05);border:1px solid rgba(26,26,230,.12);font-size:clamp(11px,1.05vw,13px);color:var(--mid-grey);line-height:1.6}
+.tcl-note strong{color:var(--deep-blue);font-weight:700}
+
+/* ── lateral_entry_g9.html ── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --deep-blue:#1A1AE6;--mid-blue:#3333CC;--periwinkle:#7B7BE8;
+  --pale-blue:#A0A0F5;--off-white:#F4F4FB;--dark-navy:#1C1C2E;
+  --white:#FFFFFF;--mid-grey:#4A4A6A;--light-grey:#8888A8;
+}
+html,body{width:100%;height:100%;font-family:'Sora',sans-serif;overflow:hidden}
+.deck{width:100vw;height:100vh;position:relative;overflow:hidden}
+.slide{position:absolute;inset:0;width:100%;height:100%;transform:translateY(100%);transition:transform .45s cubic-bezier(.65,0,.35,1);will-change:transform;overflow:hidden}
+.slide.active{transform:translateY(0)}.slide.prev{transform:translateY(-100%)}
+
+.nav-dots{position:fixed;bottom:clamp(18px,2.5vw,32px);left:50%;transform:translateX(-50%);display:flex;gap:10px;z-index:100}
+.nav-dot{width:7px;height:7px;border-radius:50%;border:none;cursor:pointer;padding:0;transition:background .25s,transform .25s}
+.nav-dot.light{background:rgba(255,255,255,.25)}.nav-dot.dark{background:rgba(28,28,46,.18)}
+.nav-dot.active.light{background:var(--periwinkle);transform:scale(1.3)}.nav-dot.active.dark{background:var(--deep-blue);transform:scale(1.3)}
+.nav-arrow{position:fixed;left:50%;transform:translateX(-50%);z-index:100;width:clamp(36px,3.5vw,48px);height:clamp(36px,3.5vw,48px);border-radius:50%;font-size:clamp(14px,1.4vw,18px);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s,border-color .2s,color .2s;backdrop-filter:blur(4px)}
+.nav-arrow.light{border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.06);color:rgba(255,255,255,.5)}
+.nav-arrow.dark{border:1px solid rgba(26,26,230,.2);background:rgba(26,26,230,.06);color:var(--mid-grey)}
+.nav-arrow.light:hover{background:rgba(123,123,232,.2);border-color:rgba(123,123,232,.4);color:var(--white)}
+.nav-arrow.dark:hover{background:rgba(26,26,230,.12);border-color:rgba(26,26,230,.4);color:var(--deep-blue)}
+.nav-arrow.up{top:clamp(12px,1.5vw,24px)}.nav-arrow.down{bottom:clamp(52px,6vw,76px)}
+.nav-arrow:disabled{opacity:.2;cursor:default}
+.slide-badge{position:absolute;bottom:clamp(16px,2vw,28px);right:clamp(20px,2.2vw,32px);font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;z-index:10}
+.badge-light{color:rgba(255,255,255,.15)}.badge-dark{color:rgba(28,28,46,.22)}
+
+/* ── SHARED ── */
+.top-bar{background:var(--deep-blue);padding:clamp(18px,2.2vw,28px) clamp(48px,5.5vw,80px);display:flex;align-items:center;justify-content:space-between;position:relative;z-index:2;flex-shrink:0}
+.top-bar-label{font-size:clamp(10px,.95vw,12px);font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--pale-blue);display:flex;align-items:center;gap:12px}
+.top-bar-label::before{content:'';display:block;width:24px;height:2px;background:var(--pale-blue)}
+.top-bar-title{font-size:clamp(13px,1.3vw,17px);font-weight:700;color:var(--white)}
+.grade-bar{display:flex;align-items:center;justify-content:space-between;padding:clamp(10px,1.2vw,16px) clamp(48px,5.5vw,80px);background:var(--off-white);border-bottom:1px solid rgba(26,26,230,.08);flex-shrink:0}
+.grade-label-big{font-size:clamp(22px,2.8vw,38px);font-weight:800;color:var(--dark-navy);letter-spacing:-.02em}
+.grade-bar-left{display:flex;align-items:center;gap:clamp(12px,1.5vw,20px)}
+.grade-theme-badge{padding:clamp(5px,.6vw,8px) clamp(12px,1.4vw,18px);border-radius:100px;background:rgba(26,26,230,.14);border:1px solid rgba(26,26,230,.28);font-size:clamp(11px,1.05vw,13px);font-weight:700;color:var(--deep-blue);letter-spacing:.04em}
+.grade-bar-right{display:flex;align-items:center;gap:clamp(20px,2.5vw,36px)}
+.grade-meta-item{text-align:center}
+.grade-meta-val{font-size:clamp(14px,1.5vw,20px);font-weight:800;color:var(--dark-navy)}
+.grade-meta-label{font-size:clamp(8px,.78vw,10px);font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--light-grey)}
+.tab-strip{display:flex;gap:0;padding:0 clamp(48px,5.5vw,80px);background:var(--white);border-bottom:2px solid rgba(26,26,230,.08);flex-shrink:0}
+.tab-btn{padding:clamp(10px,1.2vw,16px) clamp(16px,2vw,28px);font-family:'Sora',sans-serif;font-size:clamp(12px,1.15vw,15px);font-weight:600;color:var(--light-grey);background:none;border:none;border-bottom:3px solid transparent;cursor:pointer;transition:color .2s,border-color .2s;margin-bottom:-2px}
+.tab-btn.active{color:var(--deep-blue);border-bottom-color:var(--deep-blue)}
+.tab-btn:hover:not(.active){color:var(--mid-grey)}
+.tab-panels{flex:1;position:relative;overflow:hidden;min-height:0}
+.tab-panel{display:none;grid-template-columns:1fr 1fr;height:100%;overflow:hidden}
+.tab-panel.active{display:grid}
+.tp-col{height:100%;overflow-y:auto;padding:clamp(20px,2.5vw,32px) clamp(32px,4vw,52px);display:flex;flex-direction:column;gap:clamp(8px,1vw,14px)}
+.tp-col::-webkit-scrollbar{width:3px}.tp-col::-webkit-scrollbar-thumb{background:rgba(26,26,230,.15);border-radius:2px}
+.tp-col-right{background:var(--off-white);border-left:1px solid rgba(26,26,230,.08)}
+.tp-section-label{font-size:clamp(9px,.85vw,11px);font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--light-grey);flex-shrink:0}
+.unit-card{border:1px solid rgba(26,26,230,.08);border-radius:12px;background:var(--white);padding:clamp(10px,1.2vw,16px) clamp(12px,1.4vw,18px)}
+.unit-header{display:flex;align-items:flex-start;gap:10px;margin-bottom:6px}
+.unit-num{width:clamp(22px,2.2vw,30px);height:clamp(22px,2.2vw,30px);border-radius:7px;background:rgba(26,26,230,.1);display:flex;align-items:center;justify-content:center;font-size:clamp(10px,1vw,12px);font-weight:800;color:var(--deep-blue);flex-shrink:0}
+.unit-name{font-size:clamp(12px,1.2vw,15px);font-weight:800;color:var(--dark-navy);line-height:1.2}
+.unit-pillar{font-size:clamp(9px,.9vw,11px);color:var(--light-grey);margin-top:2px}
+.unit-desc{font-size:clamp(10px,.95vw,12px);color:var(--mid-grey);line-height:1.5}
+.unit-desc strong{color:var(--dark-navy);font-weight:700}
+.unit-adj{display:inline-flex;align-items:center;gap:5px;margin-top:5px;padding:2px 9px;border-radius:100px;background:rgba(184,92,0,.08);border:1px solid rgba(184,92,0,.2);font-size:clamp(9px,.85vw,10px);font-weight:700;color:#8B4500}
+.month-marker{font-size:clamp(9px,.85vw,10px);font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--periwinkle)}
+
+/* ═══ SLIDE L9-01 ══════════════════════════════════════════════════════════ */
+#slide-L9-01{background:var(--dark-navy);display:flex;flex-direction:column;justify-content:center;align-items:flex-start;padding:clamp(60px,8vw,120px)}
+#slide-L9-01::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.02) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.02) 1px,transparent 1px);background-size:60px 60px;pointer-events:none}
+.l9-bg-num{position:absolute;right:clamp(40px,6vw,80px);top:50%;transform:translateY(-50%);font-size:clamp(200px,28vw,360px);font-weight:800;line-height:1;color:rgba(255,255,255,.03);letter-spacing:-.05em;pointer-events:none;user-select:none}
+.l9-accent{position:absolute;right:0;top:0;bottom:0;width:4px;background:linear-gradient(to bottom,transparent,var(--periwinkle) 40%,var(--deep-blue) 70%,transparent)}
+.l9-content{position:relative;z-index:2}
+.l9-kicker{font-size:clamp(10px,.95vw,12px);font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--periwinkle);display:flex;align-items:center;gap:12px;margin-bottom:clamp(16px,2vw,28px)}
+.l9-kicker::before{content:'';display:block;width:40px;height:2px;background:var(--periwinkle)}
+.l9-title{font-size:clamp(44px,7.5vw,112px);font-weight:800;line-height:.92;letter-spacing:-.04em;color:var(--white);margin-bottom:clamp(20px,2.5vw,36px)}
+.l9-title .ac{color:var(--pale-blue)}
+.l9-vp{font-size:clamp(15px,1.7vw,22px);font-weight:300;color:rgba(255,255,255,.6);line-height:1.55;max-width:640px;margin-bottom:clamp(24px,3vw,40px)}
+.l9-vp strong{color:rgba(255,255,255,.85);font-weight:700}
+.l9-chips{display:flex;gap:clamp(8px,1vw,14px);flex-wrap:wrap}
+.l9-chip{padding:clamp(7px,.8vw,10px) clamp(14px,1.6vw,22px);border-radius:100px;font-size:clamp(11px,1vw,13px);font-weight:600;letter-spacing:.03em}
+.l9-chip:nth-child(1){background:rgba(160,160,245,.1);color:#A0A0F5;border:1px solid rgba(160,160,245,.2)}
+.l9-chip:nth-child(2){background:rgba(123,123,232,.1);color:#A0A0F5;border:1px solid rgba(123,123,232,.2)}
+.l9-chip:nth-child(3){background:rgba(26,26,230,.2);color:var(--pale-blue);border:1px solid rgba(26,26,230,.35)}
+
+/* ═══ SLIDE L9-02 ══════════════════════════════════════════════════════════ */
+#slide-L9-02{background:var(--white);display:grid;grid-template-rows:auto auto auto 1fr}
+#slide-L9-02::before{content:'';position:absolute;inset:0;background-image:radial-gradient(circle,rgba(26,26,230,.05) 1px,transparent 1px);background-size:28px 28px;pointer-events:none;z-index:0}
+#slide-L9-02 .top-bar,#slide-L9-02 .grade-bar,#slide-L9-02 .tab-strip{position:relative;z-index:2}
+#slide-L9-02 .tab-panels{position:relative;z-index:1}
+
+.session-track-wrap{display:flex;flex-direction:column;gap:clamp(8px,1vw,14px)}
+.session-track{display:flex;gap:3px;align-items:stretch;height:clamp(32px,3.5vw,44px);border-radius:8px;overflow:hidden}
+.track-seg{display:flex;align-items:center;justify-content:center;font-size:clamp(9px,.85vw,10px);font-weight:700;letter-spacing:.04em;text-transform:uppercase}
+.seg-found{background:var(--deep-blue);color:var(--white);flex:6}
+.seg-core{background:var(--periwinkle);color:var(--white);flex:20}
+.seg-close{background:rgba(136,136,168,.35);color:var(--dark-navy);flex:2}
+.track-legend{display:flex;gap:clamp(14px,1.8vw,24px);flex-wrap:wrap}
+.tl-item{display:flex;align-items:center;gap:8px}
+.tl-dot{width:10px;height:10px;border-radius:3px;flex-shrink:0}
+.tl-label{font-size:clamp(11px,1.05vw,13px);color:var(--mid-grey)}
+.tl-label strong{color:var(--dark-navy);font-weight:700}
+.stats-row{display:flex;gap:clamp(10px,1.2vw,18px)}
+.stat-box{flex:1;padding:clamp(10px,1.2vw,16px);border-radius:10px;background:rgba(26,26,230,.04);border:1px solid rgba(26,26,230,.1);text-align:center}
+.stat-val{font-size:clamp(18px,2vw,26px);font-weight:800;color:var(--deep-blue);line-height:1}
+.stat-lbl{font-size:clamp(9px,.85vw,10px);font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--light-grey);margin-top:4px}
+.stat-box.highlight{background:rgba(26,26,230,.1);border-color:rgba(26,26,230,.25)}
+.stat-box.highlight .stat-val{color:var(--deep-blue)}
+
+/* Foundations blocks */
+.found-grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:clamp(8px,1vw,14px);height:100%;align-content:start}
+.found-block{border-radius:12px;border:1px solid rgba(26,26,230,.12);background:var(--white);padding:clamp(12px,1.4vw,18px);display:flex;flex-direction:column;gap:7px}
+.fb-header{display:flex;align-items:center;gap:10px}
+.fb-num{width:clamp(26px,2.6vw,34px);height:clamp(26px,2.6vw,34px);border-radius:9px;background:var(--deep-blue);display:flex;align-items:center;justify-content:center;font-size:clamp(10px,1vw,12px);font-weight:800;color:var(--white);flex-shrink:0}
+.fb-title{font-size:clamp(12px,1.2vw,15px);font-weight:800;color:var(--dark-navy)}
+.fb-sessions{font-size:clamp(10px,.95vw,12px);color:var(--periwinkle);font-weight:700}
+.fb-assumed{font-size:clamp(10px,.95vw,11px);color:#8B4500;background:rgba(184,92,0,.08);border:1px solid rgba(184,92,0,.18);border-radius:6px;padding:3px 8px;display:inline-block;font-weight:600}
+.fb-items{display:flex;flex-direction:column;gap:4px;flex:1}
+.fb-item{font-size:clamp(10px,.95vw,12px);color:var(--mid-grey);line-height:1.45;display:flex;align-items:flex-start;gap:6px}
+.fb-item::before{content:'→';color:var(--deep-blue);font-size:10px;flex-shrink:0;margin-top:1px}
+.fb-unlocks{margin-top:auto;padding:clamp(6px,.7vw,9px) clamp(10px,1.2vw,14px);border-radius:8px;background:rgba(26,26,230,.06);border:1px solid rgba(26,26,230,.1);font-size:clamp(10px,.95vw,11px);color:var(--deep-blue);font-weight:600}
+
+/* Capstone tab */
+.capstone-card{border-radius:14px;border:2px solid rgba(26,26,230,.2);background:linear-gradient(135deg,rgba(26,26,230,.06) 0%,rgba(26,26,230,.02) 100%);padding:clamp(16px,1.8vw,24px);display:flex;flex-direction:column;gap:clamp(10px,1.2vw,16px)}
+.cap-headline{font-size:clamp(18px,2.2vw,28px);font-weight:800;color:var(--dark-navy);letter-spacing:-.02em}
+.cap-headline .ac{color:var(--deep-blue)}
+.cap-components{display:grid;grid-template-columns:1fr 1fr;gap:clamp(8px,1vw,12px)}
+.cap-comp{border-radius:10px;border:1px solid rgba(26,26,230,.12);background:var(--white);padding:clamp(10px,1.2vw,14px);display:flex;align-items:flex-start;gap:10px}
+.cap-comp-icon{font-size:clamp(18px,1.8vw,24px);flex-shrink:0}
+.cap-comp-name{font-size:clamp(12px,1.2vw,15px);font-weight:800;color:var(--dark-navy);margin-bottom:3px}
+.cap-comp-desc{font-size:clamp(10px,.95vw,12px);color:var(--mid-grey);line-height:1.45}
+.cap-gate{padding:clamp(10px,1.2vw,14px) clamp(14px,1.6vw,18px);border-radius:10px;background:rgba(26,26,230,.05);border-left:4px solid var(--deep-blue);font-size:clamp(11px,1.05vw,13px);color:var(--mid-grey);line-height:1.6}
+.cap-gate strong{color:var(--dark-navy);font-weight:700}
+.cap-panel{display:flex;gap:clamp(12px,1.5vw,20px)}
+.cap-panel-item{flex:1;padding:clamp(10px,1.2vw,14px);border-radius:10px;background:var(--white);border:1px solid rgba(26,26,230,.1);text-align:center}
+.cap-panel-val{font-size:clamp(16px,1.8vw,22px);font-weight:800;color:var(--deep-blue);line-height:1}
+.cap-panel-lbl{font-size:clamp(9px,.85vw,11px);color:var(--mid-grey);margin-top:4px}
+
+/* ═══ SLIDE L9-03 ══════════════════════════════════════════════════════════ */
+#slide-L9-03{background:var(--white);display:grid;grid-template-rows:auto 1fr}
+#slide-L9-03::before{content:'';position:absolute;inset:0;background-image:radial-gradient(circle,rgba(26,26,230,.05) 1px,transparent 1px);background-size:28px 28px;pointer-events:none;z-index:0}
+.l9-tools-body{position:relative;z-index:1;display:flex;flex-direction:column;padding:clamp(18px,2.2vw,28px) clamp(48px,5.5vw,80px) clamp(44px,5.5vw,56px);gap:clamp(14px,1.7vw,22px);justify-content:center}
+.l9-tools-intro{display:flex;align-items:center;justify-content:space-between}
+.l9-tools-headline{font-size:clamp(18px,2.2vw,30px);font-weight:800;color:var(--dark-navy);letter-spacing:-.02em}
+.l9-tools-headline .ac{color:var(--deep-blue)}
+.same-badge-global{padding:clamp(8px,1vw,12px) clamp(16px,2vw,24px);border-radius:100px;background:rgba(26,180,100,.1);border:1px solid rgba(26,180,100,.3);font-size:clamp(11px,1.05vw,14px);font-weight:700;color:#1A7A4A;display:flex;align-items:center;gap:8px}
+.same-badge-global::before{content:'✓';font-size:clamp(13px,1.3vw,16px)}
+.tools-grid-primary{display:grid;grid-template-columns:repeat(5,1fr);gap:clamp(7px,.85vw,12px)}
+.tools-grid-landscape{display:grid;grid-template-columns:repeat(5,1fr);gap:clamp(7px,.85vw,12px)}
+.landscape-section-label{font-size:clamp(9px,.85vw,10px);font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--light-grey)}
+.tool-card-l9{border-radius:12px;border:1px solid rgba(26,26,230,.08);background:var(--white);padding:clamp(12px,1.4vw,18px) clamp(10px,1.2vw,16px);display:flex;flex-direction:column;gap:clamp(5px,.6vw,9px);position:relative;overflow:hidden;transition:border-color .2s}
+.tool-card-l9:hover{border-color:rgba(26,26,230,.2)}
+.tool-card-l9::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--deep-blue)}
+.tool-card-sm{border-radius:10px;border:1px solid rgba(136,136,168,.18);background:rgba(136,136,168,.04);padding:clamp(10px,1.2vw,14px) clamp(10px,1.2vw,14px);display:flex;flex-direction:column;gap:5px;position:relative;overflow:hidden}
+.tool-card-sm::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:rgba(136,136,168,.3)}
+.tc-icon{width:clamp(28px,2.8vw,36px);height:clamp(28px,2.8vw,36px);border-radius:8px;background:rgba(26,26,230,.08);display:flex;align-items:center;justify-content:center;font-size:clamp(13px,1.4vw,17px)}
+.tc-name{font-size:clamp(11px,1.1vw,14px);font-weight:800;color:var(--dark-navy);line-height:1.2}
+.tc-name-sm{font-size:clamp(10px,1vw,12px);font-weight:700;color:var(--mid-grey);line-height:1.2}
+.tc-cat{font-size:clamp(8px,.8vw,10px);font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--light-grey)}
+.tc-session{font-size:clamp(9px,.88vw,11px);color:var(--periwinkle);font-weight:600}
+.tc-same{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:100px;background:rgba(26,180,100,.1);border:1px solid rgba(26,180,100,.25);font-size:clamp(8px,.8vw,9px);font-weight:700;color:#1A7A4A;margin-top:auto}
+.tc-same::before{content:'✓'}
+.tc-demo{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:100px;background:rgba(136,136,168,.1);border:1px solid rgba(136,136,168,.2);font-size:clamp(8px,.8vw,9px);font-weight:700;color:var(--light-grey)}
+
+/* ═══ SLIDE L9-04 ══════════════════════════════════════════════════════════ */
+#slide-L9-04{background:var(--white);display:grid;grid-template-rows:auto 1fr}
+#slide-L9-04::before{content:'';position:absolute;inset:0;background-image:radial-gradient(circle,rgba(26,26,230,.05) 1px,transparent 1px);background-size:28px 28px;pointer-events:none;z-index:0}
+.l9-ca-body{display:grid;grid-template-columns:1fr 1fr;position:relative;z-index:1;overflow:hidden}
+.l9-ca-left{display:flex;flex-direction:column;padding:clamp(22px,2.8vw,36px) clamp(36px,4.5vw,52px) clamp(44px,5.5vw,56px);gap:clamp(8px,1vw,12px);border-right:1px solid rgba(26,26,230,.08);overflow-y:auto}
+.l9-ca-left::-webkit-scrollbar{width:3px}.l9-ca-left::-webkit-scrollbar-thumb{background:rgba(26,26,230,.15);border-radius:2px}
+.l9-ca-right{background:var(--off-white);display:flex;flex-direction:column;padding:clamp(22px,2.8vw,36px) clamp(36px,4.5vw,52px) clamp(44px,5.5vw,56px);gap:clamp(10px,1.2vw,16px);overflow-y:auto}
+.l9-ca-right::-webkit-scrollbar{width:3px}.l9-ca-right::-webkit-scrollbar-thumb{background:rgba(26,26,230,.15);border-radius:2px}
+.section-label{font-size:clamp(9px,.85vw,11px);font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--light-grey);flex-shrink:0}
+.comp-row{display:flex;align-items:flex-start;gap:10px;padding:clamp(9px,1.1vw,13px) clamp(12px,1.4vw,16px);border-radius:10px;border:1px solid rgba(26,26,230,.08);background:var(--white)}
+.comp-pill{flex-shrink:0;padding:3px 10px;border-radius:100px;font-size:clamp(8px,.78vw,9px);font-weight:700;letter-spacing:.06em;text-transform:uppercase;white-space:nowrap;margin-top:2px}
+.pill-same{background:rgba(26,180,100,.1);border:1px solid rgba(26,180,100,.25);color:#1A7A4A}
+.pill-adj{background:rgba(184,92,0,.1);border:1px solid rgba(184,92,0,.25);color:#8B4500}
+.comp-text{font-size:clamp(11px,1.05vw,13px);font-weight:600;color:var(--dark-navy);line-height:1.4;margin-bottom:3px}
+.comp-adj-note{font-size:clamp(10px,.95vw,12px);color:var(--mid-grey);line-height:1.45}
+.comp-adj-note strong{color:var(--dark-navy);font-weight:700}
+.assess-list{display:flex;flex-direction:column;gap:clamp(5px,.6vw,8px)}
+.assess-item{display:flex;align-items:flex-start;gap:10px;padding:clamp(8px,1vw,11px) clamp(12px,1.4vw,16px);border-radius:9px;background:var(--white);border:1px solid rgba(26,26,230,.08)}
+.assess-tag{flex-shrink:0;padding:3px 9px;border-radius:100px;font-size:clamp(8px,.78vw,9px);font-weight:700;letter-spacing:.04em;text-transform:uppercase;white-space:nowrap;margin-top:1px}
+.at-quiz{background:rgba(123,123,232,.1);color:#4444BB;border:1px solid rgba(123,123,232,.2)}
+.at-test{background:rgba(26,26,230,.1);color:var(--deep-blue);border:1px solid rgba(26,26,230,.2)}
+.at-port{background:rgba(51,51,204,.08);color:var(--mid-blue);border:1px solid rgba(51,51,204,.18)}
+.at-show{background:rgba(28,28,46,.08);color:var(--dark-navy);border:1px solid rgba(28,28,46,.15)}
+.assess-label{font-size:clamp(11px,1.05vw,13px);font-weight:600;color:var(--dark-navy);line-height:1.3}
+.assess-sub{font-size:clamp(10px,.95vw,12px);color:var(--mid-grey);line-height:1.4;margin-top:1px}
+.badge-callout{padding:clamp(14px,1.6vw,20px) clamp(16px,1.8vw,24px);border-radius:12px;border:2px solid rgba(26,26,230,.25);background:linear-gradient(135deg,rgba(26,26,230,.08) 0%,rgba(26,26,230,.03) 100%)}
+.bc-top{display:flex;align-items:center;gap:12px;margin-bottom:8px}
+.bc-icon{font-size:clamp(22px,2.4vw,30px);flex-shrink:0}
+.bc-name{font-size:clamp(14px,1.4vw,18px);font-weight:800;color:var(--dark-navy)}
+.bc-body{font-size:clamp(11px,1.05vw,13px);color:var(--mid-grey);line-height:1.6}
+.bc-body strong{color:var(--dark-navy);font-weight:700}
+.bc-quote{margin-top:10px;padding:clamp(8px,1vw,12px) clamp(12px,1.4vw,16px);border-left:3px solid var(--deep-blue);background:rgba(26,26,230,.04);font-size:clamp(11px,1.05vw,13px);color:var(--mid-grey);font-style:italic;line-height:1.55}
+.cert-badge{display:flex;align-items:center;gap:12px;padding:clamp(12px,1.4vw,18px) clamp(14px,1.6vw,20px);border-radius:12px;background:var(--dark-navy);border:2px solid rgba(160,160,245,.2)}
+.cert-icon{font-size:clamp(24px,2.6vw,34px);flex-shrink:0}
+.cert-name{font-size:clamp(13px,1.3vw,17px);font-weight:800;color:var(--white);margin-bottom:4px}
+.cert-body{font-size:clamp(10px,.95vw,12px);color:rgba(255,255,255,.5);line-height:1.5}
+.cert-body strong{color:var(--pale-blue);font-weight:700}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   DECK NAVIGATION — final override
+   ═══════════════════════════════════════════════════════════════════════════ */
+html,body{overflow:hidden!important;height:100%!important}
+.deck{position:relative!important;width:100vw!important;height:100vh!important;overflow:hidden!important}
+.slide{position:absolute!important;top:0!important;left:0!important;width:100%!important;height:100vh!important;min-height:unset!important;transform:translateY(100%);transition:transform 0.15s ease!important;will-change:transform;overflow:hidden}
+.slide.active{transform:translateY(0)!important}
+.slide.prev{transform:translateY(-100%)!important}
+/* hide nav-dots — clean look */
+.nav-dots{display:none!important}
+
 /* ═══════════════════════════════════════════════════════════════════════════
    MOBILE RESPONSIVE — ≤ 768px
    ═══════════════════════════════════════════════════════════════════════════ */
-@media (max-width: 768px) {
+@media(max-width:768px){
+  /* Body containers: internally scrollable when stacked single-column */
+  .s2-content,.s6-body,.s8-body,.s9-main,
+  .s11-body,.pillar-body,
+  .s22-body,.s23-body,.s25-body,.s26-body,.s28-body,.s29-body{
+    overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch}
+  /* Full-bleed slides scroll at slide level (ID beats class specificity) */
+  #slide-01,#slide-05{overflow-y:auto}
+  .s7-pillars-area{overflow-y:auto}
 
-  /* ── Global slide: let content expand beyond 100vh rather than clip ── */
-  .slide {
-    overflow: visible;
-    min-height: 100vh;
-  }
+  /* Top bars */
+  .top-bar,.s6-top,.s7-top-bar{padding:14px 20px;flex-direction:column;align-items:flex-start;gap:4px}
+  .top-bar-title,.s6-top-title,.s7-title{font-size:13px}
 
-  /* ── Top bar: tighter padding, stack label + title ── */
-  .top-bar,
-  .s6-top,
-  .s7-top-bar {
-    padding: 14px 20px;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 4px;
-  }
-  .top-bar-title,
-  .s6-top-title,
-  .s7-title { font-size: 13px; }
+  /* Slide 01 — Hero */
+  #slide-01{grid-template-columns:1fr}
+  .junction{display:none}
+  .s1-left,.s1-right{padding:32px 24px}
 
-  /* ── SLIDE 00 — title wordmark can wrap ── */
-  .s00-wordmark { white-space: normal; font-size: clamp(36px,10vw,60px); }
-  .s00-inner { padding: 32px 24px; }
+  /* Slide 02 */
+  .s2-content{grid-template-columns:1fr}
+  .col-left{border-right:none;border-bottom:1px solid rgba(26,26,230,.1);padding:28px 20px}
+  .col-right{padding:28px 20px}
 
-  /* ── SLIDE 01 — Hero: stack left/right ── */
-  #slide-01 { grid-template-columns: 1fr; }
-  .junction { display: none; }
-  .s1-left,
-  .s1-right { padding: 32px 24px; }
-  .s1-right { min-height: 50vh; }
+  /* Slide 03 */
+  .stat-row{grid-template-columns:repeat(2,1fr)}
+  .bottom-strip{padding:16px 20px}
 
-  /* ── SLIDE 02 — Opportunity ── */
-  .s2-content { grid-template-columns: 1fr; }
-  .col-left {
-    border-right: none;
-    border-bottom: 1px solid rgba(26,26,230,0.1);
-    padding: 28px 20px;
-  }
-  .col-right { padding: 28px 20px; }
+  /* Slide 05 */
+  #slide-05{grid-template-columns:1fr}
+  .s5-left{border-right:none;border-bottom:1px solid rgba(26,26,230,.08);padding:28px 20px}
+  .s5-right{padding:28px 20px}
 
-  /* ── SLIDE 03 — stat row: 2 columns ── */
-  .stat-row { grid-template-columns: repeat(2, 1fr); }
-  .bottom-strip { padding: 16px 20px; }
+  /* Slide 06 */
+  .s6-body{grid-template-columns:1fr}
+  .s6-explain{border-right:none;border-bottom:1px solid rgba(26,26,230,.1);padding:28px 20px}
+  .s6-visual{padding:24px 20px}
+  .arc-grid{grid-template-columns:repeat(2,1fr)}
+  .arc-line{display:none}
 
-  /* ── SLIDE 05 — Not a Tech Course ── */
-  #slide-05 { grid-template-columns: 1fr; }
-  .s5-left {
-    border-right: none;
-    border-bottom: 1px solid rgba(26,26,230,0.08);
-    padding: 28px 20px;
-  }
-  .s5-right { padding: 28px 20px; }
+  /* Slide 07 */
+  .s7-pillars-area{padding:0 16px}
+  .pillars-row{grid-template-columns:repeat(2,1fr);align-items:start;padding-bottom:32px}
 
-  /* ── SLIDE 06 — Four-Year Arc ── */
-  .s6-body { grid-template-columns: 1fr; }
-  .s6-explain {
-    border-right: none;
-    border-bottom: 1px solid rgba(26,26,230,0.1);
-    padding: 28px 20px;
-  }
-  .s6-visual { padding: 24px 20px; }
-  .arc-grid { grid-template-columns: repeat(2, 1fr); }
-  .arc-line { display: none; }
+  /* Slide 08 */
+  .s8-body{grid-template-columns:1fr}
+  .s8-left,.s8-right{padding:28px 20px}
 
-  /* ── SLIDE 07 — Five Pillars ── */
-  .s7-pillars-area { padding: 0 16px; }
-  .pillars-row {
-    grid-template-columns: repeat(2, 1fr);
-    align-items: start;
-    padding-bottom: 32px;
-  }
+  /* Slide 09 */
+  .s9-main{grid-template-columns:1fr}
+  .s9-left{border-right:none;border-bottom:1px solid rgba(255,255,255,.06);padding:28px 20px}
+  .s9-right{padding:20px 20px}
 
-  /* ── SLIDE 08 — Graduate Can Do ── */
-  .s8-body { grid-template-columns: 1fr; }
-  .s8-left {
-    min-height: 40vh;
-    padding: 28px 20px;
-  }
-  .s8-right { padding: 28px 20px; }
+  /* Slide 11 */
+  .s11-body{grid-template-columns:1fr}
+  .s11-left{border-right:none;border-bottom:1px solid rgba(26,26,230,.08);padding:28px 20px}
+  .s11-right{padding:28px 20px}
 
-  /* ── SLIDE 09 — Programme at a Glance ── */
-  .s9-main { grid-template-columns: 1fr; }
-  .s9-left {
-    border-right: none;
-    border-bottom: 1px solid rgba(255,255,255,0.06);
-    padding: 28px 20px;
-  }
-  .s9-right { padding: 20px 20px; }
+  /* Pillar slides 12–16 */
+  .pillar-body{grid-template-columns:1fr}
+  .pillar-left{border-right:none;border-bottom:1px solid rgba(26,26,230,.08);padding:28px 20px}
+  .pillar-right{padding:28px 20px}
 
-  /* ── SLIDE 11 — Pillar 1 ── */
-  .s11-body { grid-template-columns: 1fr; }
-  .s11-left {
-    border-right: none;
-    border-bottom: 1px solid rgba(26,26,230,0.08);
-    padding: 28px 20px;
-  }
-  .s11-right {
-    overflow-y: visible;
-    min-height: auto;
-    padding: 28px 20px;
-  }
+  /* Grade bar */
+  .grade-bar{padding:12px 20px;flex-direction:column;align-items:flex-start;gap:8px}
+  .grade-bar-right{gap:16px}
 
-  /* ── SLIDES 12–16 — Shared pillar layout ── */
-  .pillar-body { grid-template-columns: 1fr; }
-  .pillar-left {
-    border-right: none;
-    border-bottom: 1px solid rgba(26,26,230,0.08);
-    padding: 28px 20px;
-  }
-  .pillar-right {
-    overflow-y: visible;
-    min-height: auto;
-    padding: 28px 20px;
-  }
+  /* Tab strip */
+  .tab-strip{padding:0 16px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+  .tab-strip::-webkit-scrollbar{display:none}
+  .tab-btn{padding:10px 14px;font-size:12px}
 
-  /* ── Grade bar: stack on mobile ── */
-  .grade-bar {
-    padding: 12px 20px;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 8px;
-  }
-  .grade-bar-right { gap: 16px; }
+  /* Tab panels: scrollable container, single-column */
+  .tab-panels{overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;position:relative}
+  .tab-panel{position:relative;inset:auto;display:none;opacity:1;pointer-events:auto;grid-template-columns:1fr;overflow:visible;height:auto;transition:none}
+  .tab-panel.active{display:grid;opacity:1}
+  .tp-col{padding:20px;overflow-y:visible;height:auto}
+  .tp-col-right{border-left:none;border-top:1px solid rgba(26,26,230,.07)}
+  /* Slide 17 scoped */
+  #slide-17 .tab-panels{overflow-y:auto;position:relative}
+  #slide-17 .tab-panel{display:none;position:relative;height:auto;overflow:visible}
+  #slide-17 .tab-panel.active{display:grid;grid-template-columns:1fr;height:auto;overflow:visible}
+  #slide-17 .tp-col{height:auto;overflow-y:visible;padding:20px}
 
-  /* ── Tab strip: horizontally scrollable ── */
-  .tab-strip {
-    padding: 0 16px;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-  }
-  .tab-strip::-webkit-scrollbar { display: none; }
-  .tab-btn { padding: 10px 14px; font-size: 12px; }
+  /* Slide 22 — matrix */
+  .s22-body{grid-template-columns:1fr}
+  .s22-left{border-right:none;border-bottom:1px solid rgba(26,26,230,.08);padding:28px 20px}
+  .s22-right{overflow-x:auto;-webkit-overflow-scrolling:touch;padding:16px 20px 32px}
+  .matrix-headers,.matrix-row{min-width:480px}
 
-  /* ── SLIDES 17–20 — Curriculum tabs: release fixed height ── */
-  #slide-17,
-  #slide-18,
-  #slide-19,
-  #slide-20 {
-    height: auto;
-    min-height: auto;
-    overflow: visible;
-  }
+  /* Slides 23,25,26 */
+  .s23-body,.s25-body,.s26-body{grid-template-columns:1fr}
+  .s23-left,.s25-left,.s26-left{border-right:none;border-bottom:1px solid rgba(26,26,230,.08);padding:28px 20px}
+  .s23-right,.s25-right,.s26-right{padding:28px 20px;justify-content:flex-start}
 
-  /* Slide 17 scoped overrides */
-  #slide-17 {
-    height: auto;
-    overflow: visible;
-  }
-  #slide-17 .tab-panels {
-    position: static;
-    overflow: visible;
-    min-height: auto;
-  }
-  #slide-17 .tab-panel {
-    display: none;
-    position: static;
-    height: auto;
-    overflow: visible;
-  }
-  #slide-17 .tab-panel.active {
-    display: grid;
-    grid-template-columns: 1fr;
-    height: auto;
-    overflow: visible;
-  }
-  #slide-17 .tp-col {
-    height: auto;
-    overflow-y: visible;
-    padding: 20px 20px;
-  }
+  /* Slide 27 */
+  #slide-27{padding:clamp(40px,8vw,80px) 24px}
 
-  /* Global tab panel model → display:none/grid on mobile */
-  .tab-panels {
-    position: static;
-    overflow: visible;
-    min-height: auto;
-  }
-  .tab-panel {
-    position: static;
-    display: none;
-    opacity: 1;
-    pointer-events: auto;
-    grid-template-columns: 1fr;
-    overflow: visible;
-  }
-  .tab-panel.active {
-    display: grid;
-    opacity: 1;
-  }
-  .tp-col {
-    padding: 20px 20px;
-    overflow-y: visible;
-  }
-  .tp-col-right {
-    border-left: none;
-    border-top: 1px solid rgba(26,26,230,0.07);
-  }
+  /* Slide 28 */
+  .s28-body{grid-template-columns:1fr}
+  .s28-left{border-right:none;border-bottom:1px solid rgba(26,26,230,.08);padding:28px 20px}
+  .s28-right{grid-template-columns:1fr;padding:28px 20px}
 
-  /* ── SLIDE 22 — Tool Matrix: stack + horizontal scroll for matrix ── */
-  .s22-body { grid-template-columns: 1fr; }
-  .s22-left {
-    border-right: none;
-    border-bottom: 1px solid rgba(26,26,230,0.08);
-    padding: 28px 20px;
-  }
-  .s22-right {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    padding: 16px 20px 32px;
-  }
-  .matrix-headers,
-  .matrix-row { min-width: 480px; }
+  /* Slide 29 */
+  .s29-body{grid-template-columns:1fr}
+  .s29-left{border-right:none;border-bottom:1px solid rgba(26,26,230,.08);padding:28px 20px}
+  .s29-right{padding:28px 20px}
+  .cw{flex-direction:column;align-items:stretch;gap:20px}
+  .cc{flex:none}
 
-  /* ── SLIDE 23 — Landscape Approach ── */
-  .s23-body { grid-template-columns: 1fr; }
-  .s23-left {
-    border-right: none;
-    border-bottom: 1px solid rgba(26,26,230,0.08);
-    padding: 28px 20px;
-  }
-  .s23-right { padding: 28px 20px; justify-content: flex-start; }
-
-  /* ── SLIDE 25 — Assessment ── */
-  .s25-body { grid-template-columns: 1fr; }
-  .s25-left {
-    border-right: none;
-    border-bottom: 1px solid rgba(26,26,230,0.08);
-    padding: 28px 20px;
-  }
-  .s25-right { padding: 28px 20px; justify-content: flex-start; }
-
-  /* ── SLIDE 26 — Credentials ── */
-  .s26-body { grid-template-columns: 1fr; }
-  .s26-left {
-    border-right: none;
-    border-bottom: 1px solid rgba(26,26,230,0.08);
-    padding: 28px 20px;
-  }
-  .s26-right { padding: 28px 20px; justify-content: flex-start; }
-
-  /* ── SLIDE 27 — Interlude ── */
-  #slide-27 { padding: clamp(40px,8vw,80px) 24px; }
-
-  /* ── SLIDE 28 — Four Profiles ── */
-  .s28-body { grid-template-columns: 1fr; }
-  .s28-left {
-    border-right: none;
-    border-bottom: 1px solid rgba(26,26,230,0.08);
-    padding: 28px 20px;
-  }
-  .s28-right { grid-template-columns: 1fr; padding: 28px 20px; }
-
-  /* ── SLIDE 29 — Why Now ── */
-  .s29-body { grid-template-columns: 1fr; }
-  .s29-left {
-    border-right: none;
-    border-bottom: 1px solid rgba(26,26,230,0.08);
-    padding: 28px 20px;
-  }
-  .s29-right { padding: 28px 20px; }
-  .cw { flex-direction: column; align-items: stretch; gap: 20px; }
-  .cc { flex: none; }
-
-  /* ── SLIDE 30 & 31 — close-out slides ── */
-  #slide-30 { padding: 48px 24px; }
-
+  /* Slides 30,31 */
+  #slide-30{padding:48px 24px}
 }
 </style>
 </head>
 <body>
 <div class="deck">
-<!-- ═══ SLIDE 00 — TITLE ═════════════════════════════════════════════ -->
-  <div class="slide active" id="slide-00">
-    <div class="s00-inner">
-      <div class="s00-wordmark"><span class="campus">Campus</span><span class="logix">logix</span></div>
-      <div class="s00-divider"></div>
-      <div class="s00-programme">AI Aspire for Schools</div>
-    </div>
-  </div>
 <!-- ═══ SLIDE 01 — HERO ════════════════════════════════════════════════ -->
-  <div class="slide" id="slide-01">
+  <div class="slide active" id="slide-01">
     <div class="junction"></div>
 
     <div class="s1-left">
@@ -3185,7 +3830,7 @@ html,body{width:100%;height:auto;font-family:'Sora',sans-serif;overflow:auto}
       </div>
     </div>
 
-    <div class="slide-badge dark-text">Campuslogix AI Aspire &nbsp;·&nbsp; 01 / 31</div>
+    <div class="slide-badge dark-text">Campuslogix AI Aspire &nbsp;·&nbsp; 01 / 32</div>
   </div>
 
 
@@ -3258,7 +3903,7 @@ html,body{width:100%;height:auto;font-family:'Sora',sans-serif;overflow:auto}
       </div>
     </div>
 
-    <div class="slide-badge dark-text">Campuslogix AI Aspire &nbsp;·&nbsp; 02 / 31</div>
+    <div class="slide-badge dark-text">Campuslogix AI Aspire &nbsp;·&nbsp; 02 / 32</div>
   </div>
 
 
@@ -3318,7 +3963,7 @@ html,body{width:100%;height:auto;font-family:'Sora',sans-serif;overflow:auto}
 
     <div class="bottom-strip">
       <div class="bottom-wordmark">Campus<em>logix</em> AI Aspire for Schools</div>
-      <div class="bottom-badge">Campuslogix AI Aspire &nbsp;·&nbsp; 03 / 31</div>
+      <div class="bottom-badge">Campuslogix AI Aspire &nbsp;·&nbsp; 03 / 32</div>
     </div>
   </div>
 
@@ -3333,7 +3978,7 @@ html,body{width:100%;height:auto;font-family:'Sora',sans-serif;overflow:auto}
         What we teach. How we teach it. Why it compounds across four years into something genuinely rare — a student who can think, build, and act in an AI-first world.
       </p>
     </div>
-    <div class="slide-badge">Campuslogix AI Aspire &nbsp;·&nbsp; 04 / 31</div>
+    <div class="slide-badge">Campuslogix AI Aspire &nbsp;·&nbsp; 04 / 32</div>
   </div>
 
   <!-- ═══ SLIDE 05 — NOT A TECHNOLOGY COURSE ═══════════════════════════ -->
@@ -3382,7 +4027,7 @@ html,body{width:100%;height:auto;font-family:'Sora',sans-serif;overflow:auto}
         </div>
       </div>
     </div>
-    <div class="slide-badge on-white">Campuslogix AI Aspire &nbsp;·&nbsp; 05 / 31</div>
+    <div class="slide-badge on-white">Campuslogix AI Aspire &nbsp;·&nbsp; 05 / 32</div>
   </div>
 
   <!-- ═══ SLIDE 06 — FOUR-YEAR ARC ════════════════════════════════════ -->
@@ -3497,7 +4142,7 @@ html,body{width:100%;height:auto;font-family:'Sora',sans-serif;overflow:auto}
       </div>
 
     </div>
-    <div class="slide-badge on-white">Campuslogix AI Aspire &nbsp;·&nbsp; 06 / 31</div>
+    <div class="slide-badge on-white">Campuslogix AI Aspire &nbsp;·&nbsp; 06 / 32</div>
   </div>
 
   <!-- ═══ SLIDE 07 — FIVE PILLARS ══════════════════════════════════════ -->
@@ -3552,7 +4197,7 @@ html,body{width:100%;height:auto;font-family:'Sora',sans-serif;overflow:auto}
       </div>
       <div class="pillars-baseline"></div>
     </div>
-    <div class="slide-badge on-white">Campuslogix AI Aspire &nbsp;·&nbsp; 07 / 31</div>
+    <div class="slide-badge on-white">Campuslogix AI Aspire &nbsp;·&nbsp; 07 / 32</div>
   </div>
 
   <!-- ═══ SLIDE 08 — WHAT A GRADUATE CAN DO ════════════════════════════ -->
@@ -3598,7 +4243,7 @@ html,body{width:100%;height:auto;font-family:'Sora',sans-serif;overflow:auto}
         </div>
       </div>
     </div>
-    <div class="slide-badge on-white">Campuslogix AI Aspire &nbsp;·&nbsp; 08 / 31</div>
+    <div class="slide-badge on-white">Campuslogix AI Aspire &nbsp;·&nbsp; 08 / 32</div>
   </div>
 
   <!-- ═══ SLIDE 09 — PROGRAMME AT A GLANCE ═════════════════════════════ -->
@@ -3690,7 +4335,7 @@ html,body{width:100%;height:auto;font-family:'Sora',sans-serif;overflow:auto}
         </div>
       </div>
     </div>
-    <div class="slide-badge">Campuslogix AI Aspire &nbsp;·&nbsp; 09 / 31</div>
+    <div class="slide-badge">Campuslogix AI Aspire &nbsp;·&nbsp; 09 / 32</div>
   </div>
 
 <!-- ═══ SLIDE 10 — SECTION BREAKER ════════════════════════════════════ -->
@@ -3739,7 +4384,7 @@ html,body{width:100%;height:auto;font-family:'Sora',sans-serif;overflow:auto}
       </div>
     </div>
 
-    <div class="slide-badge">Campuslogix AI Aspire &nbsp;·&nbsp; 10 / 31</div>
+    <div class="slide-badge">Campuslogix AI Aspire &nbsp;·&nbsp; 10 / 32</div>
   </div>
 
 
@@ -3840,7 +4485,7 @@ html,body{width:100%;height:auto;font-family:'Sora',sans-serif;overflow:auto}
       </div>
     </div>
 
-    <div class="slide-badge on-white">Campuslogix AI Aspire &nbsp;·&nbsp; 11 / 31</div>
+    <div class="slide-badge on-white">Campuslogix AI Aspire &nbsp;·&nbsp; 11 / 32</div>
   </div>
 
 
@@ -3928,7 +4573,7 @@ html,body{width:100%;height:auto;font-family:'Sora',sans-serif;overflow:auto}
         </div>
       </div>
     </div>
-    <div class="slide-badge">Campuslogix AI Aspire &nbsp;·&nbsp; 12 / 31</div>
+    <div class="slide-badge">Campuslogix AI Aspire &nbsp;·&nbsp; 12 / 32</div>
   </div>
 
 
@@ -4018,7 +4663,7 @@ html,body{width:100%;height:auto;font-family:'Sora',sans-serif;overflow:auto}
         </div>
       </div>
     </div>
-    <div class="slide-badge">Campuslogix AI Aspire &nbsp;·&nbsp; 13 / 31</div>
+    <div class="slide-badge">Campuslogix AI Aspire &nbsp;·&nbsp; 13 / 32</div>
   </div>
 
 
@@ -4107,7 +4752,7 @@ html,body{width:100%;height:auto;font-family:'Sora',sans-serif;overflow:auto}
         </div>
       </div>
     </div>
-    <div class="slide-badge">Campuslogix AI Aspire &nbsp;·&nbsp; 14 / 31</div>
+    <div class="slide-badge">Campuslogix AI Aspire &nbsp;·&nbsp; 14 / 32</div>
   </div>
 
 
@@ -4197,7 +4842,7 @@ html,body{width:100%;height:auto;font-family:'Sora',sans-serif;overflow:auto}
         </div>
       </div>
     </div>
-    <div class="slide-badge">Campuslogix AI Aspire &nbsp;·&nbsp; 15 / 31</div>
+    <div class="slide-badge">Campuslogix AI Aspire &nbsp;·&nbsp; 15 / 32</div>
   </div>
 
 <!-- ═══ SLIDE 16 — SECTION BREAKER ════════════════════════════════════ -->
@@ -4235,7 +4880,7 @@ html,body{width:100%;height:auto;font-family:'Sora',sans-serif;overflow:auto}
       </div>
     </div>
 
-    <div class="slide-badge badge-light">Campuslogix AI Aspire &nbsp;·&nbsp; 16 / 31</div>
+    <div class="slide-badge badge-light">Campuslogix AI Aspire &nbsp;·&nbsp; 16 / 32</div>
   </div>
 
 
@@ -4515,7 +5160,7 @@ html,body{width:100%;height:auto;font-family:'Sora',sans-serif;overflow:auto}
 
     </div><!-- /tab-panels -->
 
-    <div class="slide-badge badge-dark">Campuslogix AI Aspire &nbsp;·&nbsp; 17 / 31</div>
+    <div class="slide-badge badge-dark">Campuslogix AI Aspire &nbsp;·&nbsp; 17 / 32</div>
   </div>
 
 
@@ -4659,7 +5304,7 @@ html,body{width:100%;height:auto;font-family:'Sora',sans-serif;overflow:auto}
       </div>
     </div>
   </div>
-  <div class="slide-badge">Campuslogix AI Aspire &nbsp;·&nbsp; 18 / 31</div>
+  <div class="slide-badge">Campuslogix AI Aspire &nbsp;·&nbsp; 18 / 32</div>
 </div>
 
 
@@ -4802,7 +5447,7 @@ html,body{width:100%;height:auto;font-family:'Sora',sans-serif;overflow:auto}
       </div>
     </div>
   </div>
-  <div class="slide-badge">Campuslogix AI Aspire &nbsp;·&nbsp; 19 / 31</div>
+  <div class="slide-badge">Campuslogix AI Aspire &nbsp;·&nbsp; 19 / 32</div>
 </div>
 
 
@@ -4950,7 +5595,7 @@ html,body{width:100%;height:auto;font-family:'Sora',sans-serif;overflow:auto}
       </div>
     </div>
   </div>
-  <div class="slide-badge">Campuslogix AI Aspire &nbsp;·&nbsp; 20 / 31</div>
+  <div class="slide-badge">Campuslogix AI Aspire &nbsp;·&nbsp; 20 / 32</div>
 </div>
 
 <!-- ═══════════════════════════════════════════════════════════════════════
@@ -5001,7 +5646,7 @@ html,body{width:100%;height:auto;font-family:'Sora',sans-serif;overflow:auto}
     </div>
   </div>
 
-  <div class="slide-badge badge-light">Campuslogix AI Aspire &nbsp;·&nbsp; 21 / 31</div>
+  <div class="slide-badge badge-light">Campuslogix AI Aspire &nbsp;·&nbsp; 21 / 32</div>
 </div>
 
 
@@ -5154,7 +5799,7 @@ html,body{width:100%;height:auto;font-family:'Sora',sans-serif;overflow:auto}
     </div><!-- /s22-right -->
   </div><!-- /s22-body -->
 
-  <div class="slide-badge badge-dark">Campuslogix AI Aspire &nbsp;·&nbsp; 22 / 31</div>
+  <div class="slide-badge badge-dark">Campuslogix AI Aspire &nbsp;·&nbsp; 22 / 32</div>
 </div>
 
 
@@ -5266,7 +5911,7 @@ html,body{width:100%;height:auto;font-family:'Sora',sans-serif;overflow:auto}
     </div>
   </div>
 
-  <div class="slide-badge badge-dark">Campuslogix AI Aspire &nbsp;·&nbsp; 23 / 31</div>
+  <div class="slide-badge badge-dark">Campuslogix AI Aspire &nbsp;·&nbsp; 23 / 32</div>
 </div>
 
 <!-- ═══════════════════════════════════════════════════════════════════════
@@ -5294,7 +5939,7 @@ html,body{width:100%;height:auto;font-family:'Sora',sans-serif;overflow:auto}
     </p>
   </div>
 
-  <div class="slide-badge badge-light">Campuslogix AI Aspire &nbsp;·&nbsp; 24 / 31</div>
+  <div class="slide-badge badge-light">Campuslogix AI Aspire &nbsp;·&nbsp; 24 / 32</div>
 </div>
 
 
@@ -5416,7 +6061,7 @@ html,body{width:100%;height:auto;font-family:'Sora',sans-serif;overflow:auto}
 
     </div>
   </div>
-  <div class="slide-badge badge-dark">Campuslogix AI Aspire &nbsp;·&nbsp; 25 / 31</div>
+  <div class="slide-badge badge-dark">Campuslogix AI Aspire &nbsp;·&nbsp; 25 / 32</div>
 </div>
 
 
@@ -5533,7 +6178,7 @@ html,body{width:100%;height:auto;font-family:'Sora',sans-serif;overflow:auto}
 
     </div>
   </div>
-  <div class="slide-badge badge-dark">Campuslogix AI Aspire &nbsp;·&nbsp; 26 / 31</div>
+  <div class="slide-badge badge-dark">Campuslogix AI Aspire &nbsp;·&nbsp; 26 / 32</div>
 </div>
 
 <div class="slide active" id="slide-27">
@@ -5666,40 +6311,1215 @@ html,body{width:100%;height:auto;font-family:'Sora',sans-serif;overflow:auto}
   </div>
   <div class="slide-badge badge-light">Campuslogix AI Aspire &nbsp;·&nbsp; 31 / 31</div>
 </div>
+
+<!-- ══ SLIDE L7-01 — BREAKER + VALUE PROP ════════════════════════════════ -->
+<div class="slide active" id="slide-L7-01">
+  <div class="l7-accent-line"></div>
+  <div class="l7-bg-num">G7</div>
+  <div class="l7-content">
+    <div class="l7-kicker">Lateral Entry Programme</div>
+    <div class="l7-title">AI Aspire<br><span class="ac">Grade 7</span></div>
+    <p class="l7-valueprop">
+      <strong>Same 28 sessions. Same tools. Same badge.</strong><br>
+      Built for students joining the programme directly at Grade 7 —
+      with everything they need woven into the year.
+    </p>
+    <div class="l7-chips">
+      <span class="l7-chip">28 Sessions</span>
+      <span class="l7-chip">All Tools Identical</span>
+      <span class="l7-chip">Grade 7 Badge</span>
+    </div>
+  </div>
+  <div class="slide-badge badge-light">Campuslogix AI Aspire &nbsp;·&nbsp; Lateral Entry G7</div>
+</div>
+
+
+<!-- ══ SLIDE L7-02 — CURRICULUM (TABBED) ════════════════════════════════ -->
+<div class="slide" id="slide-L7-02">
+  <div class="top-bar">
+    <div class="top-bar-label">Lateral Entry · Grade 7</div>
+    <div class="top-bar-title">The Curriculum — All 28 Sessions</div>
+  </div>
+
+  <div class="grade-bar">
+    <div class="grade-bar-left">
+      <div class="grade-label-big">Grade 7</div>
+      <div class="grade-theme-badge">UNDERSTAND</div>
+      <div style="font-size:clamp(12px,1.2vw,15px);color:var(--light-grey);font-style:italic;">"How does AI learn?"</div>
+    </div>
+    <div class="grade-bar-right">
+      <div class="grade-meta-item"><div class="grade-meta-val">28</div><div class="grade-meta-label">Sessions</div></div>
+      <div class="grade-meta-item"><div class="grade-meta-val">~42 hrs</div><div class="grade-meta-label">Total</div></div>
+      <div class="grade-meta-item"><div class="grade-meta-val">Jun – Dec</div><div class="grade-meta-label">Schedule</div></div>
+      <div class="grade-meta-item"><div class="grade-meta-val">Age 12–13</div><div class="grade-meta-label">Students</div></div>
+    </div>
+  </div>
+
+  <div class="tab-strip" id="tabs-L7-02">
+    <button class="tab-btn active" data-tab="tL7-structure">Structure</button>
+    <button class="tab-btn" data-tab="tL7-foundations">Foundations</button>
+    <button class="tab-btn" data-tab="tL7-units">Units</button>
+    <button class="tab-btn" data-tab="tL7-canva">Canva Project</button>
+  </div>
+
+  <div class="tab-panels">
+
+    <!-- STRUCTURE -->
+    <div class="tab-panel active" id="tL7-structure">
+      <div class="tp-col" style="justify-content:center;">
+        <div class="tp-section-label">How the 28 Sessions Are Structured</div>
+        <div class="session-track-wrap">
+          <div class="session-track-label">Session Flow — June to December</div>
+          <div class="session-track">
+            <div class="track-seg seg-found">Foundations</div>
+            <div class="track-seg seg-core">Core Grade 7</div>
+            <div class="track-seg seg-close">Close</div>
+          </div>
+          <div class="track-legend">
+            <div class="tl-item"><div class="tl-dot" style="background:var(--deep-blue)"></div><div class="tl-label"><strong>Sessions 1–6</strong> — Foundations Phase</div></div>
+            <div class="tl-item"><div class="tl-dot" style="background:var(--periwinkle)"></div><div class="tl-label"><strong>Sessions 7–26</strong> — Core Grade 7 (identical to standard)</div></div>
+            <div class="tl-item"><div class="tl-dot" style="background:rgba(136,136,168,.5)"></div><div class="tl-label"><strong>Sessions 27–28</strong> — Showcase + Assessment</div></div>
+          </div>
+        </div>
+        <div class="stats-row">
+          <div class="stat-box"><div class="stat-val">6</div><div class="stat-lbl">Foundations</div></div>
+          <div class="stat-box"><div class="stat-val">20</div><div class="stat-lbl">Core Grade 7</div></div>
+          <div class="stat-box"><div class="stat-val">2</div><div class="stat-lbl">Close</div></div>
+          <div class="stat-box"><div class="stat-val">28</div><div class="stat-lbl">Total</div></div>
+        </div>
+      </div>
+      <div class="tp-col tp-col-right" style="justify-content:center;">
+        <div class="tp-section-label">The Design Principle</div>
+        <div style="font-size:clamp(18px,2.2vw,30px);font-weight:800;color:var(--dark-navy);line-height:1.2;letter-spacing:-.02em;margin-bottom:clamp(12px,1.5vw,20px)">
+          The Foundations phase is<br>not a catch-up.<br>
+          <span style="color:var(--deep-blue)">It is the opening chapter.</span>
+        </div>
+        <div style="font-size:clamp(12px,1.15vw,15px);color:var(--mid-grey);line-height:1.7;border-left:3px solid rgba(26,26,230,.2);padding-left:14px;">
+          Six sessions — June. Logical reasoning, AI fundamentals, data basics, and the RCT prompting framework established before Grade 7 content begins. By Session 7, students are fully prepared for the standard Grade 7 curriculum with no distinction from peers on the standard track.
+        </div>
+      </div>
+    </div>
+
+    <!-- FOUNDATIONS -->
+    <div class="tab-panel" id="tL7-foundations">
+      <div class="tp-col" style="grid-column:1/-1;padding:clamp(20px,2.5vw,32px) clamp(36px,4.5vw,56px);">
+        <div class="tp-section-label">Phase 1 — Foundations · Sessions 1–6 · June</div>
+        <div class="found-grid">
+          <div class="found-block">
+            <div class="fb-header">
+              <div class="fb-num">F1</div>
+              <div>
+                <div class="fb-title">LR Essentials</div>
+                <div class="fb-sessions">Sessions 1–2</div>
+              </div>
+            </div>
+            <div class="fb-items">
+              <div class="fb-item">Visual pattern sequences + analogy problems</div>
+              <div class="fb-item">Cause-effect chains + if-then conditional logic</div>
+              <div class="fb-item">Classification exercises — pen and paper</div>
+              <div class="fb-item">Teacher frames LR as the foundation of all AI decision-making</div>
+            </div>
+            <div class="fb-unlocks">↳ Unlocks: Unit 1 (How AI Learns) and Unit 2 (Data Literacy)</div>
+          </div>
+          <div class="found-block">
+            <div class="fb-header">
+              <div class="fb-num">F2</div>
+              <div>
+                <div class="fb-title">AI Fundamentals + Data Basics</div>
+                <div class="fb-sessions">Sessions 3–4</div>
+              </div>
+            </div>
+            <div class="fb-items">
+              <div class="fb-item">Narrow vs general AI · AI in Indian daily life</div>
+              <div class="fb-item">Hallucination introduced — why AI is confidently wrong</div>
+              <div class="fb-item">First tool demo: ChatGPT Edu + Claude for Education</div>
+              <div class="fb-item">Data hygiene rule established and practised in Session 4</div>
+              <div class="fb-item">Spam Filter Game — classification logic applied to data</div>
+            </div>
+            <div class="fb-unlocks">↳ Unlocks: All units · Sets data hygiene for the year</div>
+          </div>
+          <div class="found-block">
+            <div class="fb-header">
+              <div class="fb-num">F3</div>
+              <div>
+                <div class="fb-title">RCT Framework + First Hands-On</div>
+                <div class="fb-sessions">Sessions 5–6</div>
+              </div>
+            </div>
+            <div class="fb-items">
+              <div class="fb-item">RCT (Role + Context + Task) named and demonstrated</div>
+              <div class="fb-item">Same question — no RCT, partial, full — students observe difference</div>
+              <div class="fb-item">First student hands-on in pairs — ChatGPT Edu + Claude</div>
+              <div class="fb-item">Prompt quality checklist introduced</div>
+            </div>
+            <div class="fb-unlocks">↳ Unlocks: Unit 3 (RCT Prompting) — direct prerequisite</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- UNITS -->
+    <div class="tab-panel" id="tL7-units">
+      <div class="tp-col">
+        <div class="tp-section-label">Sessions 7–26 — Identical to Standard Grade 7</div>
+        <div class="month-marker">July</div>
+        <div class="unit-card">
+          <div class="unit-header"><div class="unit-num">1</div><div><div class="unit-name">How AI Really Learns</div><div class="unit-pillar">Pillar 2 — Understand the Landscape · 4 sessions</div></div></div>
+          <div class="unit-desc">Neural networks, three ML types, Teachable Machine hands-on in pairs. Hypothesis testing introduced. LR connection: the classification logic from Foundations is exactly what a model does.</div>
+        </div>
+        <div class="month-marker">July – August</div>
+        <div class="unit-card">
+          <div class="unit-header"><div class="unit-num">2</div><div><div class="unit-name">Data Literacy</div><div class="unit-pillar">Pillar 2 — Understand the Landscape · 4 sessions</div></div></div>
+          <div class="unit-desc">Misleading charts, correlation vs causation, two stories from one dataset. Students argue opposing conclusions from identical data.</div>
+        </div>
+        <div class="month-marker">August – September</div>
+        <div class="unit-card">
+          <div class="unit-header"><div class="unit-num">3</div><div><div class="unit-name">Prompt Engineering L1 — RCT</div><div class="unit-pillar">Pillar 3 — Work With AI · 4 sessions</div></div></div>
+          <div class="unit-desc">RCT framework deepened. RCT across five subjects. Perplexity introduced — cited vs uncited AI. Prompt Portfolio started. Lateral entry students enter this unit with RCT already practised in F3.</div>
+        </div>
+      </div>
+      <div class="tp-col tp-col-right">
+        <div class="tp-section-label">&nbsp;</div>
+        <div class="month-marker">September – October</div>
+        <div class="unit-card">
+          <div class="unit-header"><div class="unit-num">4</div><div><div class="unit-name">AI in the Real World — Indian Context</div><div class="unit-pillar">Pillars 2 + 3 · 4 sessions</div></div></div>
+          <div class="unit-desc">Five Indian AI case studies. Perplexity research. AI Report structure and draft. Live 5-minute AI Report presentation. Mid-Year Test.</div>
+        </div>
+        <div class="month-marker">October – November</div>
+        <div class="unit-card">
+          <div class="unit-header"><div class="unit-num">5</div><div><div class="unit-name">Ethics + Canva AI Project</div><div class="unit-pillar">Pillar 5 — Think Responsibly · 4 sessions</div></div></div>
+          <div class="unit-desc">Hallucination design test. Deepfake verification. Responsible AI Charter. Canva AI explainer project — three brief options (see Canva Project tab).</div>
+        </div>
+        <div class="month-marker">December</div>
+        <div class="unit-card">
+          <div class="unit-header"><div class="unit-num">★</div><div><div class="unit-name">Showcase + Final Assessment</div><div class="unit-pillar">All Pillars · 2 sessions</div></div></div>
+          <div class="unit-desc">AI Research Portfolio submitted. Showcase presentation. Final Assessment. Grade 7 Badge awarded.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CANVA PROJECT -->
+    <div class="tab-panel" id="tL7-canva">
+      <div class="tp-col" style="grid-column:1/-1;padding:clamp(20px,2.5vw,32px) clamp(36px,4.5vw,56px);">
+        <div class="tp-section-label">Unit 5 — Canva AI Project · Three Brief Options</div>
+        <div style="font-size:clamp(11px,1.05vw,13px);color:var(--mid-grey);line-height:1.6;margin-bottom:clamp(12px,1.5vw,20px);">Students and teachers choose the brief appropriate to their confidence level. <strong>All three briefs use Canva for Education AI and are assessed on the same criteria</strong> — quality of AI direction, clarity of the explainer, and use of the RCT framework in prompt construction. No student is marked down for choosing Brief B over Brief A.</div>
+        <div class="brief-grid">
+          <div class="brief-card">
+            <div class="brief-label">Brief A</div>
+            <div class="brief-name">Standard</div>
+            <div class="brief-scope">5-slide AI explainer</div>
+            <div class="brief-items">
+              <div class="brief-item">Slide 1: What the AI application does</div>
+              <div class="brief-item">Slide 2: How it works — simplified</div>
+              <div class="brief-item">Slide 3: Who benefits</div>
+              <div class="brief-item">Slide 4: One risk or concern</div>
+              <div class="brief-item">Slide 5: One personal recommendation</div>
+            </div>
+            <div class="brief-for">For students who are confident with RCT and want to build a full explainer</div>
+          </div>
+          <div class="brief-card">
+            <div class="brief-label">Brief B</div>
+            <div class="brief-name">Simplified</div>
+            <div class="brief-scope">3-slide explainer</div>
+            <div class="brief-items">
+              <div class="brief-item">Slide 1: What the AI application does</div>
+              <div class="brief-item">Slide 2: One benefit</div>
+              <div class="brief-item">Slide 3: One concern or risk</div>
+            </div>
+            <div class="brief-for">For students building confidence — same assessed quality criteria, tighter scope</div>
+          </div>
+          <div class="brief-card">
+            <div class="brief-label">Brief C</div>
+            <div class="brief-name">Extended</div>
+            <div class="brief-scope">5-slide + AI audio summary</div>
+            <div class="brief-items">
+              <div class="brief-item">All five slides from Brief A</div>
+              <div class="brief-item">60-second AI-generated audio summary using a voice tool demoed by teacher</div>
+              <div class="brief-item">Written reflection on the voice generation process</div>
+            </div>
+            <div class="brief-for">For students who want a Capstone preview — multimodal output</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <div class="slide-badge badge-dark">Campuslogix AI Aspire &nbsp;·&nbsp; Lateral Entry G7</div>
+</div>
+
+
+<!-- ══ SLIDE L7-03 — TOOLS ═════════════════════════════════════════════════ -->
+<div class="slide" id="slide-L7-03">
+  <div class="top-bar">
+    <div class="top-bar-label">Lateral Entry · Grade 7</div>
+    <div class="top-bar-title">Tools — Identical to the Standard Programme</div>
+  </div>
+  <div class="l7-tools-body">
+    <div class="l7-tools-intro">
+      <div class="l7-tools-headline">
+        No tool removed.<br><span class="ac">No substitution made.</span>
+      </div>
+      <div class="same-badge-global">All 5 Grade 7 tools — same as standard track</div>
+    </div>
+    <div class="tools-grid">
+      <div class="tool-card-l7">
+        <div class="tc-icon-wrap">💬</div>
+        <div><div class="tc-name">ChatGPT Edu</div><div class="tc-cat">AI Assistant</div></div>
+        <div class="tc-session">First use: Foundations Session 4</div>
+        <div class="tc-same">Same as standard</div>
+      </div>
+      <div class="tool-card-l7">
+        <div class="tc-icon-wrap">🤖</div>
+        <div><div class="tc-name">Claude for Education</div><div class="tc-cat">AI Assistant</div></div>
+        <div class="tc-session">First use: Foundations Session 4</div>
+        <div class="tc-same">Same as standard</div>
+      </div>
+      <div class="tool-card-l7">
+        <div class="tc-icon-wrap">🧠</div>
+        <div><div class="tc-name">Teachable Machine</div><div class="tc-cat">ML Demo</div></div>
+        <div class="tc-session">First use: Unit 1 Session 9</div>
+        <div class="tc-same">Same as standard</div>
+      </div>
+      <div class="tool-card-l7">
+        <div class="tc-icon-wrap">🔍</div>
+        <div><div class="tc-name">Perplexity</div><div class="tc-cat">Research</div></div>
+        <div class="tc-session">First use: Unit 3 Session 17</div>
+        <div class="tc-same">Same as standard</div>
+      </div>
+      <div class="tool-card-l7">
+        <div class="tc-icon-wrap">🎨</div>
+        <div><div class="tc-name">Canva for Education AI</div><div class="tc-cat">Slide & Presentation</div></div>
+        <div class="tc-session">First use: Unit 5 Session 25</div>
+        <div class="tc-same">Same as standard</div>
+      </div>
+    </div>
+    <div style="padding:clamp(12px,1.4vw,18px) clamp(16px,1.8vw,24px);border-radius:12px;border:1px solid rgba(26,26,230,.12);background:rgba(26,26,230,.04);font-size:clamp(11px,1.05vw,13px);color:var(--mid-grey);line-height:1.6;">
+      <strong style="color:var(--dark-navy)">Data Hygiene Rule</strong> — Established Foundations Session 4 and reinforced at every tool introduction: <em>"No real names, no personal details, no school information in any prompt — ever."</em>
+    </div>
+  </div>
+  <div class="slide-badge badge-dark">Campuslogix AI Aspire &nbsp;·&nbsp; Lateral Entry G7</div>
+</div>
+
+
+<!-- ══ SLIDE L7-04 — EXIT COMPETENCIES + ASSESSMENT ══════════════════════ -->
+<div class="slide" id="slide-L7-04">
+  <div class="top-bar">
+    <div class="top-bar-label">Lateral Entry · Grade 7</div>
+    <div class="top-bar-title">Exit Competencies · Assessment · Badge</div>
+  </div>
+  <div class="l7-ca-body">
+
+    <div class="l7-ca-left">
+      <div class="section-label">Exit Competencies — What a Grade 7 Lateral Entry Student Can Do</div>
+
+      <div class="comp-row">
+        <div class="comp-pill pill-same">Same</div>
+        <div class="comp-text-wrap">
+          <div class="comp-text">Explain how a machine learning model learns using a non-technical analogy</div>
+        </div>
+      </div>
+      <div class="comp-row">
+        <div class="comp-pill pill-adj">Adjusted</div>
+        <div class="comp-text-wrap">
+          <div class="comp-text">Read a data chart critically</div>
+          <div class="comp-adj-note"><strong>Standard:</strong> Full dual-narrative analysis &nbsp;·&nbsp; <strong>Lateral:</strong> Identify one misleading element and explain why it misleads</div>
+        </div>
+      </div>
+      <div class="comp-row">
+        <div class="comp-pill pill-same">Same</div>
+        <div class="comp-text-wrap">
+          <div class="comp-text">Write a structured RCT prompt and evaluate output against intent</div>
+        </div>
+      </div>
+      <div class="comp-row">
+        <div class="comp-pill pill-same">Same</div>
+        <div class="comp-text-wrap">
+          <div class="comp-text">Use Perplexity and distinguish cited vs uncited AI results</div>
+        </div>
+      </div>
+      <div class="comp-row">
+        <div class="comp-pill pill-adj">Adjusted</div>
+        <div class="comp-text-wrap">
+          <div class="comp-text">Identify hallucination, deepfakes, and name logical fallacies</div>
+          <div class="comp-adj-note"><strong>Standard:</strong> 3 named fallacies &nbsp;·&nbsp; <strong>Lateral:</strong> Hallucination + deepfakes in full · 1 fallacy (appeal to authority)</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="l7-ca-right">
+      <div class="section-label">Assessment Structure — Identical to Standard</div>
+      <div class="assess-list">
+        <div class="assess-item"><span class="assess-tag at-quiz">Quiz ×3</span><div><div class="assess-label">3 quizzes · 15–20 min each</div><div class="assess-sub">Foundations + How AI Learns · Data Literacy · Ethics</div></div></div>
+        <div class="assess-item"><span class="assess-tag at-test">Mid-Year</span><div><div class="assess-label">Mid-Year Test · 45 min · Week 22</div><div class="assess-sub">LR, AI literacy, RCT prompt task, one data chart</div></div></div>
+        <div class="assess-item"><span class="assess-tag at-test">Final</span><div><div class="assess-label">Final Assessment · 35 min · Week 28</div><div class="assess-sub">LR, AI concepts, RCT prompt task, ethics scenario</div></div></div>
+        <div class="assess-item"><span class="assess-tag at-port">Portfolio</span><div><div class="assess-label">Prompt Portfolio + AI Research Portfolio</div><div class="assess-sub">Best RCT prompts · AI Report · Canva deck · Reflection</div></div></div>
+        <div class="assess-item"><span class="assess-tag at-show">Showcase</span><div><div class="assess-label">AI Report — Live 5-Minute Presentation</div><div class="assess-sub">Real Indian AI application · Week 22</div></div></div>
+      </div>
+
+      <div class="badge-callout">
+        <div class="bc-top">
+          <div class="bc-icon">🏅</div>
+          <div class="bc-name">Campuslogix AI Aspire — Grade 7 Badge</div>
+        </div>
+        <div class="bc-body">Awarded in December on completion of all programme requirements. <strong>Identical to the badge earned by students on the standard four-year track.</strong></div>
+        <div class="bc-quote">"The lateral entry designation appears in the programme record — not on the badge itself."</div>
+      </div>
+    </div>
+
+  </div>
+  <div class="slide-badge badge-dark">Campuslogix AI Aspire &nbsp;·&nbsp; Lateral Entry G7</div>
+</div>
+
+<!-- ══ SLIDE L8-01 — BREAKER + VALUE PROP ════════════════════════════════ -->
+<div class="slide active" id="slide-L8-01">
+  <div class="l8-accent"></div>
+  <div class="l8-bg-num">G8</div>
+  <div class="l8-content">
+    <div class="l8-kicker">Lateral Entry Programme</div>
+    <div class="l8-title">AI Aspire<br><span class="ac">Grade 8</span></div>
+    <p class="l8-vp">
+      <strong>Same 28 sessions. Same tools. Same badge.</strong><br>
+      Built for students joining directly at Grade 8 — two years of foundations
+      woven into the opening 8 sessions, then the full Grade 8 curriculum.
+    </p>
+    <div class="l8-chips">
+      <span class="l8-chip">28 Sessions</span>
+      <span class="l8-chip">All Tools Identical</span>
+      <span class="l8-chip">Grade 8 Badge</span>
+    </div>
+  </div>
+  <div class="slide-badge badge-light">Campuslogix AI Aspire &nbsp;·&nbsp; Lateral Entry G8</div>
+</div>
+
+
+<!-- ══ SLIDE L8-02 — CURRICULUM (TABBED) ════════════════════════════════ -->
+<div class="slide" id="slide-L8-02">
+  <div class="top-bar">
+    <div class="top-bar-label">Lateral Entry · Grade 8</div>
+    <div class="top-bar-title">The Curriculum — All 28 Sessions</div>
+  </div>
+  <div class="grade-bar">
+    <div class="grade-bar-left">
+      <div class="grade-label-big">Grade 8</div>
+      <div class="grade-theme-badge">APPLY</div>
+      <div style="font-size:clamp(12px,1.2vw,15px);color:var(--light-grey);font-style:italic;">"How do I work with AI as a tool?"</div>
+    </div>
+    <div class="grade-bar-right">
+      <div class="grade-meta-item"><div class="grade-meta-val">28</div><div class="grade-meta-label">Sessions</div></div>
+      <div class="grade-meta-item"><div class="grade-meta-val">~42 hrs</div><div class="grade-meta-label">Total</div></div>
+      <div class="grade-meta-item"><div class="grade-meta-val">Jun – Dec</div><div class="grade-meta-label">Schedule</div></div>
+      <div class="grade-meta-item"><div class="grade-meta-val">Age 13–14</div><div class="grade-meta-label">Students</div></div>
+    </div>
+  </div>
+  <div class="tab-strip" id="tabs-L8-02">
+    <button class="tab-btn active" data-tab="tL8-structure">Structure</button>
+    <button class="tab-btn" data-tab="tL8-foundations">Foundations</button>
+    <button class="tab-btn" data-tab="tL8-units">Units</button>
+    <button class="tab-btn" data-tab="tL8-miniproject">Mini-Project</button>
+  </div>
+
+  <div class="tab-panels">
+
+    <!-- STRUCTURE -->
+    <div class="tab-panel active" id="tL8-structure">
+      <div class="tp-col" style="justify-content:center;">
+        <div class="tp-section-label">How the 28 Sessions Are Structured</div>
+        <div class="session-track-wrap">
+          <div class="session-track">
+            <div class="track-seg seg-found">Foundations</div>
+            <div class="track-seg seg-core">Core Grade 8</div>
+            <div class="track-seg seg-close">Close</div>
+          </div>
+          <div class="track-legend">
+            <div class="tl-item"><div class="tl-dot" style="background:var(--deep-blue)"></div><div class="tl-label"><strong>Sessions 1–8</strong> — Foundations Phase</div></div>
+            <div class="tl-item"><div class="tl-dot" style="background:var(--periwinkle)"></div><div class="tl-label"><strong>Sessions 9–26</strong> — Core Grade 8</div></div>
+            <div class="tl-item"><div class="tl-dot" style="background:rgba(136,136,168,.5)"></div><div class="tl-label"><strong>Sessions 27–28</strong> — Close</div></div>
+          </div>
+        </div>
+        <div class="stats-row">
+          <div class="stat-box"><div class="stat-val">8</div><div class="stat-lbl">Foundations</div></div>
+          <div class="stat-box"><div class="stat-val">18</div><div class="stat-lbl">Core Grade 8</div></div>
+          <div class="stat-box"><div class="stat-val">2</div><div class="stat-lbl">Close</div></div>
+          <div class="stat-box"><div class="stat-val">28</div><div class="stat-lbl">Total</div></div>
+        </div>
+      </div>
+      <div class="tp-col tp-col-right" style="justify-content:center;">
+        <div class="tp-section-label">The Critical Gate</div>
+        <div style="font-size:clamp(18px,2.2vw,30px);font-weight:800;color:var(--dark-navy);line-height:1.2;letter-spacing:-.02em;margin-bottom:clamp(12px,1.5vw,20px)">
+          Grade 8 opens with<br>chain prompting.<br>
+          <span style="color:var(--deep-blue)">RCT must come first.</span>
+        </div>
+        <div style="font-size:clamp(12px,1.15vw,15px);color:var(--mid-grey);line-height:1.7;border-left:3px solid rgba(26,26,230,.2);padding-left:14px;margin-bottom:clamp(12px,1.5vw,20px)">
+          The 8-session Foundations phase is larger than Grade 7 because two years of prerequisites need to be in place — especially the RCT framework, which Unit 1 (chain prompting) builds on directly. By Session 9, students can enter Grade 8 content without any distinction from standard track peers.
+        </div>
+        <div style="padding:clamp(10px,1.2vw,16px) clamp(14px,1.6vw,20px);border-radius:10px;background:rgba(26,26,230,.05);border:1px solid rgba(26,26,230,.12);font-size:clamp(11px,1.05vw,13px);color:var(--mid-grey);line-height:1.6">
+          <strong style="color:var(--dark-navy)">Why 8 sessions?</strong> Grade 7 needed 6 — LR, AI basics, RCT. Grade 8 needs those plus chain prompting and a vibe coding preview. Each Foundations session is a direct prerequisite for a specific Grade 8 unit.
+        </div>
+      </div>
+    </div>
+
+    <!-- FOUNDATIONS -->
+    <div class="tab-panel" id="tL8-foundations">
+      <div class="tp-col" style="grid-column:1/-1;padding:clamp(16px,2vw,28px) clamp(32px,4vw,52px);">
+        <div class="tp-section-label">Phase 1 — Foundations · Sessions 1–8 · June – July</div>
+        <div class="found-grid-2x2">
+          <div class="found-block">
+            <div class="fb-header"><div class="fb-num">F1</div><div><div class="fb-title">LR + Systems Thinking</div><div class="fb-sessions">Sessions 1–2</div></div></div>
+            <div class="fb-items">
+              <div class="fb-item">Visual, analogy, cause-effect, if-then reasoning — pen and paper</div>
+              <div class="fb-item">Systems thinking: Input · Process · Output mapped on three everyday digital products</div>
+              <div class="fb-item">Students map their first system before the concept of vibe coding is named</div>
+            </div>
+            <div class="fb-unlocks">↳ Unlocks: Unit 2 + 3 (vibe coding) — systems map is the required first step</div>
+          </div>
+          <div class="found-block">
+            <div class="fb-header"><div class="fb-num">F2</div><div><div class="fb-title">AI Fundamentals + Data Basics</div><div class="fb-sessions">Sessions 3–4</div></div></div>
+            <div class="fb-items">
+              <div class="fb-item">Narrow vs general AI · Three ML types · Hallucination</div>
+              <div class="fb-item">First tool demo: ChatGPT Edu + Claude for Education</div>
+              <div class="fb-item">Data hygiene rule established: "No real names, no personal details, no school information in any prompt — ever"</div>
+              <div class="fb-item">Spam Filter Game · Bias in training data</div>
+            </div>
+            <div class="fb-unlocks">↳ Unlocks: All units · Data hygiene rule set for the year</div>
+          </div>
+          <div class="found-block">
+            <div class="fb-header"><div class="fb-num">F3</div><div><div class="fb-title">RCT Framework</div><div class="fb-sessions">Sessions 5–6</div></div></div>
+            <div class="fb-items">
+              <div class="fb-item">RCT (Role + Context + Task) named and practised — same question three ways</div>
+              <div class="fb-item">Peer review: swap prompts, evaluate quality against a checklist</div>
+              <div class="fb-item">First entries in the Prompt Chain Portfolio started</div>
+            </div>
+            <div class="fb-unlocks">↳ Unlocks: Unit 1 (chain prompting) — the direct prerequisite</div>
+          </div>
+          <div class="found-block">
+            <div class="fb-header"><div class="fb-num">F4</div><div><div class="fb-title">Chain Prompting + Tool Preview</div><div class="fb-sessions">Sessions 7–8</div></div></div>
+            <div class="fb-items">
+              <div class="fb-item">Chain prompting basics: RCT prompts connected in sequence</div>
+              <div class="fb-item">Perplexity introduced — cited research vs generative AI</div>
+              <div class="fb-item">Grade 8 tool landscape preview: Lovable, Bolt.new, NotebookLM, Canva AI — observation only</div>
+              <div class="fb-item">Second systems map — a simple digital product of student's choice</div>
+            </div>
+            <div class="fb-unlocks">↳ Unlocks: Unit 4 (AI for Learning) · Vibe coding mental model</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- UNITS -->
+    <div class="tab-panel" id="tL8-units">
+      <div class="tp-col">
+        <div class="tp-section-label">Sessions 9–26 · Each unit: 3 sessions (compressed from 4)</div>
+        <div class="month-marker">July – August</div>
+        <div class="unit-card">
+          <div class="unit-header"><div class="unit-num">1</div><div><div class="unit-name">Chain Prompting — Direction and Chaining</div><div class="unit-pillar">Pillar 3 — Work With AI · 3 sessions</div></div></div>
+          <div class="unit-desc">Output shaping, negative prompting, persona. 3-prompt chain with linear flow diagram before execution. The Client Brief exercise — executed and submitted.</div>
+          <div class="unit-adj">Adjusted — 3-link chain (standard: 4+) · Linear flow diagram (standard: branching)</div>
+        </div>
+        <div class="month-marker">August</div>
+        <div class="unit-card">
+          <div class="unit-header"><div class="unit-num">2</div><div><div class="unit-name">Vibe Coding — Think Like a Builder</div><div class="unit-pillar">Pillars 3 + 4 · 3 sessions</div></div></div>
+          <div class="unit-desc">Lovable demo → systems map → pairs build "My Interests" one-page app. Bolt.new introduced same session. Debug Like a Detective. 5-message constraint explained as design discipline.</div>
+          <div class="unit-adj">Adjusted — Bolt.new combined with Lovable intro (not separate session)</div>
+        </div>
+        <div class="month-marker">August – September</div>
+        <div class="unit-card">
+          <div class="unit-header"><div class="unit-num">3</div><div><div class="unit-name">Vibe Coding — Build and Iterate</div><div class="unit-pillar">Pillar 4 — Build With AI · 3 sessions</div></div></div>
+          <div class="unit-desc">Replit transparency session. School-useful app build. Peer testing with structured feedback form. Build Portfolio first layer compiled.</div>
+        </div>
+      </div>
+      <div class="tp-col tp-col-right">
+        <div class="tp-section-label">&nbsp;</div>
+        <div class="month-marker">September – October</div>
+        <div class="unit-card">
+          <div class="unit-header"><div class="unit-num">4</div><div><div class="unit-name">AI for Learning</div><div class="unit-pillar">Pillars 2 + 3 · 3 sessions</div></div></div>
+          <div class="unit-desc">NotebookLM landscape demo + hands-on combined. Feynman technique + AI for essay planning. Gamma for revision slides. Tool Choice Log first entry.</div>
+          <div class="unit-adj">Adjusted — landscape demo and hands-on combined in one session</div>
+        </div>
+        <div class="month-marker">October – November</div>
+        <div class="unit-card">
+          <div class="unit-header"><div class="unit-num">5</div><div><div class="unit-name">Ethics — Who is Responsible?</div><div class="unit-pillar">Pillar 5 — Think Responsibly · 3 sessions</div></div></div>
+          <div class="unit-desc">Three case studies + accountability chains. Design for Fairness — Flip the Brief. DPDP Act basics for builders. Mini-Project ethical brief approved before building begins.</div>
+        </div>
+        <div class="month-marker">November</div>
+        <div class="unit-card">
+          <div class="unit-header"><div class="unit-num">★</div><div><div class="unit-name">Mini-Project + Close</div><div class="unit-pillar">All Pillars · 3 + 2 sessions</div></div></div>
+          <div class="unit-desc">Team vibe-coded solution (3 sessions). Build Portfolio submission. Showcase. Final Assessment. Grade 8 Badge awarded.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MINI-PROJECT -->
+    <div class="tab-panel" id="tL8-miniproject">
+      <div class="tp-col" style="justify-content:center;">
+        <div class="tp-section-label">November — Mini-Project · Teams of 3–4</div>
+        <div style="font-size:clamp(18px,2.2vw,28px);font-weight:800;color:var(--dark-navy);line-height:1.2;letter-spacing:-.02em;margin-bottom:clamp(10px,1.2vw,18px)">
+          Team structure <span style="color:var(--deep-blue)">distributes the vibe coding load.</span>
+        </div>
+        <p style="font-size:clamp(12px,1.15vw,15px);color:var(--mid-grey);line-height:1.7;border-left:3px solid rgba(26,26,230,.2);padding-left:14px;margin-bottom:clamp(12px,1.5vw,20px)">Lateral entry students have had fewer Lovable sessions than standard track students by November. Teams of 3–4 mean no single student carries the full build. Each member owns one documented component — the team output meets the same assessed standard.</p>
+        <div class="component-grid">
+          <div class="comp-card"><strong>Systems Map</strong>Team member 1 owns the systems map and problem statement</div>
+          <div class="comp-card"><strong>Prompt Chain</strong>Team member 2 owns all prompt documentation and the flow diagram</div>
+          <div class="comp-card"><strong>Build Log</strong>Team member 3 owns the Lovable build log and debug records</div>
+          <div class="comp-card"><strong>Deck + Pitch</strong>Team member 4 (or shared) owns the Canva AI presentation deck</div>
+        </div>
+      </div>
+      <div class="tp-col tp-col-right" style="justify-content:center;">
+        <div class="tp-section-label">What Is Retained · What Is Adjusted</div>
+        <div class="mp-grid">
+          <div class="mp-card" style="border-color:rgba(26,180,100,.2);background:rgba(26,180,100,.03)">
+            <div class="mp-label" style="color:#1A7A4A">✓ Retained</div>
+            <div class="mp-items">
+              <div class="mp-item">Ethical review approved before building begins</div>
+              <div class="mp-item">Systems map on paper — required first step</div>
+              <div class="mp-item">Lovable as primary build environment</div>
+              <div class="mp-item">Bolt.new for experimentation</div>
+              <div class="mp-item">Canva AI presentation deck</div>
+              <div class="mp-item">Live panel presentation with Q&A</div>
+              <div class="mp-item">Build Portfolio documentation</div>
+            </div>
+          </div>
+          <div class="mp-card" style="border-color:rgba(184,92,0,.2);background:rgba(184,92,0,.03)">
+            <div class="mp-label" style="color:#8B4500">↻ Adjusted</div>
+            <div class="mp-items">
+              <div class="mp-item">Teams of 3–4 (standard: teams of 3)</div>
+              <div class="mp-item">One-page app acceptable as baseline; multi-page is stretch</div>
+              <div class="mp-item">Each member owns one documented component</div>
+            </div>
+          </div>
+        </div>
+        <div class="mp-note"><strong>Panel:</strong> Minimum 2 teachers + ideally one external guest. 5-minute presentation + Q&A. Written feedback given to each team. Same assessed standard as the standard programme.</div>
+      </div>
+    </div>
+
+  </div>
+  <div class="slide-badge badge-dark">Campuslogix AI Aspire &nbsp;·&nbsp; Lateral Entry G8</div>
+</div>
+
+
+<!-- ══ SLIDE L8-03 — TOOLS ═════════════════════════════════════════════════ -->
+<div class="slide" id="slide-L8-03">
+  <div class="top-bar">
+    <div class="top-bar-label">Lateral Entry · Grade 8</div>
+    <div class="top-bar-title">Tools — Identical to the Standard Programme</div>
+  </div>
+  <div class="l8-tools-body">
+    <div class="l8-tools-intro">
+      <div class="l8-tools-headline">No tool removed.<br><span class="ac">No substitution made.</span></div>
+      <div class="same-badge-global">All 9 Grade 8 tools — same as standard track</div>
+    </div>
+    <div class="tools-grid-3">
+      <div class="tool-card-l8">
+        <div class="tc-icon">💬</div>
+        <div><div class="tc-name">ChatGPT Edu</div><div class="tc-cat">AI Assistant</div></div>
+        <div class="tc-session">First use: Foundations Session 3</div>
+        <div class="tc-same">Same as standard</div>
+      </div>
+      <div class="tool-card-l8">
+        <div class="tc-icon">🤖</div>
+        <div><div class="tc-name">Claude for Education</div><div class="tc-cat">AI Assistant</div></div>
+        <div class="tc-session">First use: Foundations Session 3</div>
+        <div class="tc-same">Same as standard</div>
+      </div>
+      <div class="tool-card-l8">
+        <div class="tc-icon">🔍</div>
+        <div><div class="tc-name">Perplexity</div><div class="tc-cat">Research</div></div>
+        <div class="tc-session">First use: Foundations Session 7</div>
+        <div class="tc-same">Same as standard</div>
+      </div>
+      <div class="tool-card-l8">
+        <div class="tc-icon">🏗️</div>
+        <div><div class="tc-name">Lovable</div><div class="tc-cat">Vibe Coding — Primary</div></div>
+        <div class="tc-session">First use: Unit 2 Session 12</div>
+        <div class="tc-same">Same as standard</div>
+      </div>
+      <div class="tool-card-l8">
+        <div class="tc-icon">⚡</div>
+        <div><div class="tc-name">Bolt.new</div><div class="tc-cat">Vibe Coding — Backup</div></div>
+        <div class="tc-session">First use: Unit 2 Session 12</div>
+        <div class="tc-same">Same as standard</div>
+      </div>
+      <div class="tool-card-l8">
+        <div class="tc-icon">📓</div>
+        <div><div class="tc-name">NotebookLM</div><div class="tc-cat">Research</div></div>
+        <div class="tc-session">First use: Unit 4 Session 18</div>
+        <div class="tc-same">Same as standard</div>
+      </div>
+    </div>
+    <div class="tools-grid-bottom">
+      <div class="tool-card-sm">
+        <div><div class="tc-name-sm">Replit</div><div class="tc-cat">Code Transparency</div></div>
+        <div class="tc-session" style="font-size:clamp(9px,.85vw,10px)">Unit 3 · Demo only</div>
+        <div class="tc-same">Same as standard</div>
+      </div>
+      <div class="tool-card-sm">
+        <div><div class="tc-name-sm">Canva for Education AI</div><div class="tc-cat">Presentation</div></div>
+        <div class="tc-session" style="font-size:clamp(9px,.85vw,10px)">Unit 4 + Mini-Project</div>
+        <div class="tc-same">Same as standard</div>
+      </div>
+      <div class="tool-card-sm">
+        <div><div class="tc-name-sm">Gamma</div><div class="tc-cat">Presentation (Demo)</div></div>
+        <div class="tc-session" style="font-size:clamp(9px,.85vw,10px)">Unit 4 · Demo only</div>
+        <div class="tc-demo">Demo only</div>
+      </div>
+      <div class="tcl-note" style="grid-column:4/-1">
+        <strong>Tool Choice Log</strong> — first entry: Session 18 (Research Tools Landscape Demo). Students document the category, tools compared, primary tool chosen, and their reasoning. This entry carries forward into Grade 9 if students continue in the programme.
+      </div>
+    </div>
+  </div>
+  <div class="slide-badge badge-dark">Campuslogix AI Aspire &nbsp;·&nbsp; Lateral Entry G8</div>
+</div>
+
+
+<!-- ══ SLIDE L8-04 — COMPETENCIES + ASSESSMENT ════════════════════════════ -->
+<div class="slide" id="slide-L8-04">
+  <div class="top-bar">
+    <div class="top-bar-label">Lateral Entry · Grade 8</div>
+    <div class="top-bar-title">Exit Competencies · Assessment · Badge</div>
+  </div>
+  <div class="l8-ca-body">
+
+    <div class="l8-ca-left">
+      <div class="section-label">Exit Competencies — Grade 8 Lateral Entry</div>
+      <div class="comp-row">
+        <div class="comp-pill pill-adj">Adjusted</div>
+        <div>
+          <div class="comp-text">Design a documented prompt chain with flow diagram</div>
+          <div class="comp-adj-note"><strong>Standard:</strong> 4+ prompts, branching flowchart &nbsp;·&nbsp; <strong>Lateral:</strong> 3-link chain, linear flow diagram</div>
+        </div>
+      </div>
+      <div class="comp-row">
+        <div class="comp-pill pill-adj">Adjusted</div>
+        <div>
+          <div class="comp-text">Build a functioning interactive web application on Lovable</div>
+          <div class="comp-adj-note"><strong>Standard:</strong> Multi-page from systems map &nbsp;·&nbsp; <strong>Lateral:</strong> One-page functional app is the baseline. Multi-page is stretch.</div>
+        </div>
+      </div>
+      <div class="comp-row">
+        <div class="comp-pill pill-same">Same</div>
+        <div>
+          <div class="comp-text">Diagnose why a vibe-coded app is not behaving as intended and direct the AI builder to fix it</div>
+        </div>
+      </div>
+      <div class="comp-row">
+        <div class="comp-pill pill-same">Same</div>
+        <div>
+          <div class="comp-text">Map the accountability chain for an AI failure — identify responsibility at each node</div>
+        </div>
+      </div>
+      <div class="comp-row">
+        <div class="comp-pill pill-same">Same</div>
+        <div>
+          <div class="comp-text">Write an AI solution brief with fairness safeguards designed in — not retrofitted</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="l8-ca-right">
+      <div class="section-label">Assessment Structure — Identical to Standard</div>
+      <div class="assess-list">
+        <div class="assess-item"><span class="assess-tag at-quiz">Quiz ×3</span><div><div class="assess-label">3 quizzes · 15–20 min each</div><div class="assess-sub">Foundations + Chain Prompting · AI for Learning · Ethics Accountability</div></div></div>
+        <div class="assess-item"><span class="assess-tag at-test">Mid-Year</span><div><div class="assess-label">Mid-Year Test · 45 min · Week 22</div><div class="assess-sub">Chain prompt design, vibe coding concepts, ethics accountability</div></div></div>
+        <div class="assess-item"><span class="assess-tag at-test">Final</span><div><div class="assess-label">Final Assessment · 40 min · Week 28</div><div class="assess-sub">Systems thinking, chain prompt + flowchart, ethics scenario</div></div></div>
+        <div class="assess-item"><span class="assess-tag at-port">Portfolio</span><div><div class="assess-label">Prompt Chain Portfolio + Build Portfolio</div><div class="assess-sub">Documented chains with flow diagrams · School-useful app · Mini-Project docs · Reflection</div></div></div>
+        <div class="assess-item"><span class="assess-tag at-show">Panel</span><div><div class="assess-label">Mini-Project — Live Team Panel · Week 26</div><div class="assess-sub">5-min presentation + Q&A · Min 2 teachers + external guest</div></div></div>
+      </div>
+      <div class="badge-callout">
+        <div class="bc-top">
+          <div class="bc-icon">🏅</div>
+          <div class="bc-name">Campuslogix AI Aspire — Grade 8 Badge</div>
+        </div>
+        <div class="bc-body">Awarded in December on completion of all programme requirements. <strong>Identical to the badge earned by students on the standard four-year track.</strong></div>
+        <div class="bc-quote">"The lateral entry designation appears in the programme record — not on the badge itself."</div>
+      </div>
+    </div>
+
+  </div>
+  <div class="slide-badge badge-dark">Campuslogix AI Aspire &nbsp;·&nbsp; Lateral Entry G8</div>
+</div>
+
+<!-- ══ SLIDE L9-01 — BREAKER + VALUE PROP ════════════════════════════════ -->
+<div class="slide active" id="slide-L9-01">
+  <div class="l9-accent"></div>
+  <div class="l9-bg-num">G9</div>
+  <div class="l9-content">
+    <div class="l9-kicker">Lateral Entry Programme</div>
+    <div class="l9-title">AI Aspire<br><span class="ac">Grade 9</span></div>
+    <p class="l9-vp">
+      <strong>Same 28 sessions. All tools. Same badge + certificate.</strong><br>
+      Built for students with existing AI familiarity —
+      foundations accelerated, Capstone protected with 8 full sessions.
+    </p>
+    <div class="l9-chips">
+      <span class="l9-chip">28 Sessions</span>
+      <span class="l9-chip">All 15 Tools</span>
+      <span class="l9-chip">Grade 9 Badge + Certificate</span>
+    </div>
+  </div>
+  <div class="slide-badge badge-light">Campuslogix AI Aspire &nbsp;·&nbsp; Lateral Entry G9</div>
+</div>
+
+
+<!-- ══ SLIDE L9-02 — CURRICULUM (TABBED) ════════════════════════════════ -->
+<div class="slide" id="slide-L9-02">
+  <div class="top-bar">
+    <div class="top-bar-label">Lateral Entry · Grade 9</div>
+    <div class="top-bar-title">The Curriculum — All 28 Sessions</div>
+  </div>
+  <div class="grade-bar">
+    <div class="grade-bar-left">
+      <div class="grade-label-big">Grade 9</div>
+      <div class="grade-theme-badge">EVALUATE &amp; CREATE</div>
+      <div style="font-size:clamp(12px,1.2vw,15px);color:var(--light-grey);font-style:italic;">"How do I think critically and build with AI?"</div>
+    </div>
+    <div class="grade-bar-right">
+      <div class="grade-meta-item"><div class="grade-meta-val">28</div><div class="grade-meta-label">Sessions</div></div>
+      <div class="grade-meta-item"><div class="grade-meta-val">~42 hrs</div><div class="grade-meta-label">Total</div></div>
+      <div class="grade-meta-item"><div class="grade-meta-val">Jun – Dec</div><div class="grade-meta-label">Schedule</div></div>
+      <div class="grade-meta-item"><div class="grade-meta-val">Age 14–15</div><div class="grade-meta-label">Students</div></div>
+    </div>
+  </div>
+  <div class="tab-strip" id="tabs-L9-02">
+    <button class="tab-btn active" data-tab="tL9-structure">Structure</button>
+    <button class="tab-btn" data-tab="tL9-foundations">Foundations</button>
+    <button class="tab-btn" data-tab="tL9-units">Units</button>
+    <button class="tab-btn" data-tab="tL9-capstone">Capstone</button>
+  </div>
+  <div class="tab-panels">
+
+    <!-- STRUCTURE -->
+    <div class="tab-panel active" id="tL9-structure">
+      <div class="tp-col" style="justify-content:center;">
+        <div class="tp-section-label">How the 28 Sessions Are Structured</div>
+        <div class="session-track-wrap">
+          <div class="session-track">
+            <div class="track-seg seg-found">Foundations</div>
+            <div class="track-seg seg-core">Core Grade 9</div>
+            <div class="track-seg seg-close">Close</div>
+          </div>
+          <div class="track-legend">
+            <div class="tl-item"><div class="tl-dot" style="background:var(--deep-blue)"></div><div class="tl-label"><strong>Sessions 1–6</strong> — Foundations (accelerated)</div></div>
+            <div class="tl-item"><div class="tl-dot" style="background:var(--periwinkle)"></div><div class="tl-label"><strong>Sessions 7–26</strong> — Core Grade 9</div></div>
+            <div class="tl-item"><div class="tl-dot" style="background:rgba(136,136,168,.5)"></div><div class="tl-label"><strong>Sessions 27–28</strong> — Close</div></div>
+          </div>
+        </div>
+        <div class="stats-row">
+          <div class="stat-box"><div class="stat-val">6</div><div class="stat-lbl">Foundations</div></div>
+          <div class="stat-box"><div class="stat-val">12</div><div class="stat-lbl">Units 1–4</div></div>
+          <div class="stat-box highlight"><div class="stat-val">8</div><div class="stat-lbl">Capstone</div></div>
+          <div class="stat-box"><div class="stat-val">2</div><div class="stat-lbl">Close</div></div>
+        </div>
+      </div>
+      <div class="tp-col tp-col-right" style="justify-content:center;">
+        <div class="tp-section-label">The Design Principle</div>
+        <div style="font-size:clamp(18px,2.2vw,28px);font-weight:800;color:var(--dark-navy);line-height:1.2;letter-spacing:-.02em;margin-bottom:clamp(12px,1.5vw,18px)">
+          Foundations accelerated.<br>
+          <span style="color:var(--deep-blue)">Capstone protected.</span>
+        </div>
+        <div style="font-size:clamp(12px,1.15vw,15px);color:var(--mid-grey);line-height:1.7;border-left:3px solid rgba(26,26,230,.2);padding-left:14px;margin-bottom:clamp(10px,1.2vw,16px)">
+          Grade 9 students are assumed to have informal AI familiarity — they have used tools, understand that prompting matters, and can engage with AI concepts without starting from zero. The Foundations phase is 6 sessions (same as Grade 7) but moves faster. The time saved goes directly into the Capstone — the primary success metric of this programme.
+        </div>
+        <div style="padding:clamp(10px,1.2vw,16px);border-radius:10px;background:rgba(26,26,230,.06);border:1px solid rgba(26,26,230,.14);font-size:clamp(11px,1.05vw,13px);color:var(--mid-grey);line-height:1.6">
+          <strong style="color:var(--deep-blue)">8 Capstone sessions</strong> — the largest single investment in the year. All four components required: Lovable app · ElevenLabs audio · Canva Video AI · NotebookLM. Ethical review approved before any build begins.
+        </div>
+      </div>
+    </div>
+
+    <!-- FOUNDATIONS -->
+    <div class="tab-panel" id="tL9-foundations">
+      <div class="tp-col" style="grid-column:1/-1;padding:clamp(16px,2vw,28px) clamp(32px,4vw,52px);">
+        <div class="tp-section-label">Phase 1 — Foundations · Sessions 1–6 · June · Accelerated</div>
+        <div class="found-grid-3">
+          <div class="found-block">
+            <div class="fb-header"><div class="fb-num">F1</div><div><div class="fb-title">LR + Systems Thinking + Chain Primer</div><div class="fb-sessions">Sessions 1–2</div></div></div>
+            <div class="fb-assumed">Assumes: basic AI familiarity</div>
+            <div class="fb-items">
+              <div class="fb-item">LR in one session — if-then, cause-effect, classification framed as the basis of all AI decisions</div>
+              <div class="fb-item">Systems thinking: Input · Process · Output mapped on three digital products</div>
+              <div class="fb-item">RCT introduced and immediately elevated — 2-prompt chain on a student-chosen topic</div>
+            </div>
+            <div class="fb-unlocks">↳ Unlocks: Unit 1 (system prompts build on chain prompting)</div>
+          </div>
+          <div class="found-block">
+            <div class="fb-header"><div class="fb-num">F2</div><div><div class="fb-title">System Prompts Gateway + Tool Landscape</div><div class="fb-sessions">Sessions 3–4</div></div></div>
+            <div class="fb-assumed">Assumes: knows what ChatGPT does</div>
+            <div class="fb-items">
+              <div class="fb-item">System prompts: same question with no prompt, weak prompt, strong prompt — students see the difference immediately</div>
+              <div class="fb-item">Students write first system prompt (tutor persona)</div>
+              <div class="fb-item">Full Grade 9 tool landscape orientation: all 15 tools shown</div>
+              <div class="fb-item">Data hygiene rule established</div>
+            </div>
+            <div class="fb-unlocks">↳ Unlocks: Unit 1 directly · Tool orientation for Units 2–4</div>
+          </div>
+          <div class="found-block">
+            <div class="fb-header"><div class="fb-num">F3</div><div><div class="fb-title">First Vibe Coding Build on Lovable</div><div class="fb-sessions">Sessions 5–6</div></div></div>
+            <div class="fb-assumed">Assumes: can reason about digital products</div>
+            <div class="fb-items">
+              <div class="fb-item">Lovable demo — teacher builds live, students draw the systems map in real time</div>
+              <div class="fb-item">Bolt.new as experimentation backup — 5-message constraint explained as design discipline</div>
+              <div class="fb-item">Students build a one-page app in pairs — systems map on paper first</div>
+              <div class="fb-item">Debug Like a Detective introduced</div>
+            </div>
+            <div class="fb-unlocks">↳ Unlocks: Unit 3 (advanced vibe coding) and the Capstone build</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- UNITS -->
+    <div class="tab-panel" id="tL9-units">
+      <div class="tp-col">
+        <div class="tp-section-label">Sessions 7–18 · Units 1–4 · 3 sessions each</div>
+        <div class="month-marker">July</div>
+        <div class="unit-card">
+          <div class="unit-header"><div class="unit-num">1</div><div><div class="unit-name">System Prompts + Meta-Prompting</div><div class="unit-pillar">Pillar 3 — Work With AI · 3 sessions</div></div></div>
+          <div class="unit-desc">System prompt design for consistent behaviour. Few-shot prompting — teach AI by example. Meta-prompting: ask AI to critique and improve your own prompts. Prompt Toolkit started.</div>
+          <div class="unit-adj">Adjusted — Prompt Audit not applicable · Meta-prompting in 1 session</div>
+        </div>
+        <div class="month-marker">July – August</div>
+        <div class="unit-card">
+          <div class="unit-header"><div class="unit-num">2</div><div><div class="unit-name">Creative AI Toolkit</div><div class="unit-pillar">Pillars 3 + 4 · 3 sessions</div></div></div>
+          <div class="unit-desc">Voice landscape demo + ElevenLabs hands-on combined. Video landscape + Canva Video AI storyboard + generate. Session 3: 2-minute multimodal explainer — all three tools used as a Capstone rehearsal.</div>
+          <div class="unit-adj">Adjusted — landscape demos combined with hands-on in same sessions</div>
+        </div>
+      </div>
+      <div class="tp-col tp-col-right">
+        <div class="tp-section-label">&nbsp;</div>
+        <div class="month-marker">August – September</div>
+        <div class="unit-card">
+          <div class="unit-header"><div class="unit-num">3</div><div><div class="unit-name">Advanced Vibe Coding on Lovable</div><div class="unit-pillar">Pillar 4 — Build With AI · 3 sessions</div></div></div>
+          <div class="unit-desc">Multi-page app. Conditional logic + AI feature integration. Session 3 bridges directly into Capstone — students draft their Capstone app architecture and get peer critique before building begins.</div>
+          <div class="unit-adj">Adjusted — Hugging Face Spaces removed</div>
+        </div>
+        <div class="month-marker">September – October</div>
+        <div class="unit-card">
+          <div class="unit-header"><div class="unit-num">4</div><div><div class="unit-name">AI and Society + Ethics</div><div class="unit-pillar">Pillars 2 + 5 · 3 sessions</div></div></div>
+          <div class="unit-desc">Automation + steel-manning (one structured exercise). AI regulation frameworks. Environmental cost. Ethical Review Tool applied to Capstone brief in Session 3 — this is the gate before building begins.</div>
+          <div class="unit-adj">Adjusted — steel-manning in one exercise · Ethical review in final session</div>
+        </div>
+        <div class="month-marker">October – December</div>
+        <div class="unit-card" style="border-color:rgba(26,26,230,.2);background:linear-gradient(135deg,rgba(26,26,230,.05) 0%,rgba(26,26,230,.01) 100%)">
+          <div class="unit-header"><div class="unit-num" style="background:var(--deep-blue);color:var(--white)">★</div><div><div class="unit-name" style="color:var(--deep-blue)">Capstone Project — 8 Sessions</div><div class="unit-pillar">All 5 Pillars</div></div></div>
+          <div class="unit-desc">Ethical review gate → Design Package → App build (Lovable) → ElevenLabs audio → Canva Video AI → NotebookLM research → deck → user testing → rehearsal → panel.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CAPSTONE -->
+    <div class="tab-panel" id="tL9-capstone">
+      <div class="tp-col" style="justify-content:center;">
+        <div class="tp-section-label">October – December · Sessions 19–26</div>
+        <div class="capstone-card">
+          <div class="cap-headline">The Capstone.<br><span class="ac">All four components. No exceptions.</span></div>
+          <div class="cap-components">
+            <div class="cap-comp">
+              <div class="cap-comp-icon">🏗️</div>
+              <div><div class="cap-comp-name">Vibe-Coded App</div><div class="cap-comp-desc">Lovable — systems map on paper first. One-page minimum. Multi-page target. All prompts drafted before typing.</div></div>
+            </div>
+            <div class="cap-comp">
+              <div class="cap-comp-icon">🎙️</div>
+              <div><div class="cap-comp-name">ElevenLabs Audio</div><div class="cap-comp-desc">60–90 second voiceover. Script precision drives output quality — this is a prompting skill.</div></div>
+            </div>
+            <div class="cap-comp">
+              <div class="cap-comp-icon">🎬</div>
+              <div><div class="cap-comp-name">Canva Video AI</div><div class="cap-comp-desc">30–60 second video. Storyboard on paper first. Generated and embedded in the presentation.</div></div>
+            </div>
+            <div class="cap-comp">
+              <div class="cap-comp-icon">📓</div>
+              <div><div class="cap-comp-name">NotebookLM Research</div><div class="cap-comp-desc">Min 5 sources uploaded. Grounded conversation used to generate one research insight that informs the build.</div></div>
+            </div>
+          </div>
+          <div class="cap-gate"><strong>Ethical review is the gate.</strong> Every student submits the Capstone Design Package (problem statement + architecture + prompt chain + ethical review) in Session 19. No student begins building until it is approved. This is non-negotiable.</div>
+        </div>
+      </div>
+      <div class="tp-col tp-col-right" style="justify-content:center;">
+        <div class="tp-section-label">Panel and Adjusted Elements</div>
+        <div class="cap-panel">
+          <div class="cap-panel-item"><div class="cap-panel-val">5 min</div><div class="cap-panel-lbl">Presentation</div></div>
+          <div class="cap-panel-item"><div class="cap-panel-val">3 min</div><div class="cap-panel-lbl">Q&amp;A</div></div>
+          <div class="cap-panel-item"><div class="cap-panel-val">2+</div><div class="cap-panel-lbl">Panellists min</div></div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:clamp(8px,1vw,12px);margin-top:clamp(8px,1vw,12px)">
+          <div style="padding:clamp(10px,1.2vw,14px) clamp(12px,1.4vw,18px);border-radius:10px;background:rgba(26,180,100,.06);border:1px solid rgba(26,180,100,.2);font-size:clamp(11px,1.05vw,13px);color:var(--mid-grey);line-height:1.6">
+            <strong style="color:#1A7A4A">✓ Capstone Design Package submitted</strong> — Problem statement, solution architecture, documented prompt chain for the app, ethical review. Replaces the Tool Choice Log (not maintained across prior years).
+          </div>
+          <div style="padding:clamp(10px,1.2vw,14px) clamp(12px,1.4vw,18px);border-radius:10px;background:rgba(184,92,0,.06);border:1px solid rgba(184,92,0,.18);font-size:clamp(11px,1.05vw,13px);color:var(--mid-grey);line-height:1.6">
+            <strong style="color:#8B4500">↻ Tool Choice Log not required</strong> — A three-year document cannot be created in one year. The Capstone Design Package is the equivalent artefact for lateral entry students.
+          </div>
+          <div style="padding:clamp(10px,1.2vw,14px) clamp(12px,1.4vw,18px);border-radius:10px;background:rgba(184,92,0,.06);border:1px solid rgba(184,92,0,.18);font-size:clamp(11px,1.05vw,13px);color:var(--mid-grey);line-height:1.6">
+            <strong style="color:#8B4500">↻ Panel shortened</strong> — Standard: 7 min + 5 min Q&A, 3 panellists. Lateral: 5 min + 3 min Q&A, minimum 2 panellists. Ideally includes one external guest.
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <div class="slide-badge badge-dark">Campuslogix AI Aspire &nbsp;·&nbsp; Lateral Entry G9</div>
+</div>
+
+
+<!-- ══ SLIDE L9-03 — TOOLS ═════════════════════════════════════════════════ -->
+<div class="slide" id="slide-L9-03">
+  <div class="top-bar">
+    <div class="top-bar-label">Lateral Entry · Grade 9</div>
+    <div class="top-bar-title">Tools — The Complete Grade 9 Toolkit</div>
+  </div>
+  <div class="l9-tools-body">
+    <div class="l9-tools-intro">
+      <div class="l9-tools-headline">The most complete<br><span class="ac">toolkit in the programme.</span></div>
+      <div class="same-badge-global">All 15 Grade 9 tools — nothing removed</div>
+    </div>
+    <div class="tools-grid-primary">
+      <div class="tool-card-l9">
+        <div class="tc-icon">💬</div>
+        <div><div class="tc-name">ChatGPT Edu</div><div class="tc-cat">AI Assistant</div></div>
+        <div class="tc-session">Foundations Session 3</div>
+        <div class="tc-same">Same as standard</div>
+      </div>
+      <div class="tool-card-l9">
+        <div class="tc-icon">🤖</div>
+        <div><div class="tc-name">Claude for Education</div><div class="tc-cat">AI Assistant</div></div>
+        <div class="tc-session">Foundations Session 3</div>
+        <div class="tc-same">Same as standard</div>
+      </div>
+      <div class="tool-card-l9">
+        <div class="tc-icon">📓</div>
+        <div><div class="tc-name">NotebookLM</div><div class="tc-cat">Research</div></div>
+        <div class="tc-session">Session 4 shown · Session 19 Capstone</div>
+        <div class="tc-same">Same as standard</div>
+      </div>
+      <div class="tool-card-l9">
+        <div class="tc-icon">🔍</div>
+        <div><div class="tc-name">Perplexity</div><div class="tc-cat">Research</div></div>
+        <div class="tc-session">Foundations Session 4</div>
+        <div class="tc-same">Same as standard</div>
+      </div>
+      <div class="tool-card-l9">
+        <div class="tc-icon">🏗️</div>
+        <div><div class="tc-name">Lovable</div><div class="tc-cat">Vibe Coding — Primary</div></div>
+        <div class="tc-session">Foundations Session 5</div>
+        <div class="tc-same">Same as standard</div>
+      </div>
+      <div class="tool-card-l9">
+        <div class="tc-icon">⚡</div>
+        <div><div class="tc-name">Bolt.new</div><div class="tc-cat">Vibe Coding — Backup</div></div>
+        <div class="tc-session">Foundations Session 5</div>
+        <div class="tc-same">Same as standard</div>
+      </div>
+      <div class="tool-card-l9">
+        <div class="tc-icon">🎙️</div>
+        <div><div class="tc-name">ElevenLabs</div><div class="tc-cat">Voice & Audio</div></div>
+        <div class="tc-session">Unit 2 Session 10</div>
+        <div class="tc-same">Same as standard</div>
+      </div>
+      <div class="tool-card-l9">
+        <div class="tc-icon">🎬</div>
+        <div><div class="tc-name">Canva Video AI</div><div class="tc-cat">Video Generation</div></div>
+        <div class="tc-session">Unit 2 Session 11</div>
+        <div class="tc-same">Same as standard</div>
+      </div>
+      <div class="tool-card-l9">
+        <div class="tc-icon">🎨</div>
+        <div><div class="tc-name">Canva for Education AI</div><div class="tc-cat">Presentation</div></div>
+        <div class="tc-session">Session 4 shown · Session 23 Capstone</div>
+        <div class="tc-same">Same as standard</div>
+      </div>
+      <div class="tool-card-l9">
+        <div class="tc-icon">🔮</div>
+        <div><div class="tc-name">Gamma</div><div class="tc-cat">Presentation (alt)</div></div>
+        <div class="tc-session">Session 4 shown</div>
+        <div class="tc-same">Same as standard</div>
+      </div>
+    </div>
+    <div>
+      <div class="landscape-section-label" style="margin-bottom:clamp(6px,.7vw,10px)">Landscape Demo Only — Teacher shows, no student accounts</div>
+      <div class="tools-grid-landscape">
+        <div class="tool-card-sm">
+          <div><div class="tc-name-sm">Murf AI</div><div class="tc-cat">Voice</div></div>
+          <div class="tc-demo">Demo only</div>
+        </div>
+        <div class="tool-card-sm">
+          <div><div class="tc-name-sm">Suno</div><div class="tc-cat">Voice / Music</div></div>
+          <div class="tc-demo">Demo only</div>
+        </div>
+        <div class="tool-card-sm">
+          <div><div class="tc-name-sm">Runway ML</div><div class="tc-cat">Video</div></div>
+          <div class="tc-demo">Demo only</div>
+        </div>
+        <div class="tool-card-sm">
+          <div><div class="tc-name-sm">Pika</div><div class="tc-cat">Video</div></div>
+          <div class="tc-demo">Demo only</div>
+        </div>
+        <div class="tool-card-sm">
+          <div><div class="tc-name-sm">Kling</div><div class="tc-cat">Video</div></div>
+          <div class="tc-demo">Demo only</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-badge badge-dark">Campuslogix AI Aspire &nbsp;·&nbsp; Lateral Entry G9</div>
+</div>
+
+
+<!-- ══ SLIDE L9-04 — COMPETENCIES + ASSESSMENT ════════════════════════════ -->
+<div class="slide" id="slide-L9-04">
+  <div class="top-bar">
+    <div class="top-bar-label">Lateral Entry · Grade 9</div>
+    <div class="top-bar-title">Exit Competencies · Assessment · Badge + Certificate</div>
+  </div>
+  <div class="l9-ca-body">
+
+    <div class="l9-ca-left">
+      <div class="section-label">Exit Competencies — Grade 9 Lateral Entry</div>
+      <div class="comp-row">
+        <div class="comp-pill pill-adj">Adjusted</div>
+        <div>
+          <div class="comp-text">Design and deploy system prompts, few-shot prompts, and meta-prompts</div>
+          <div class="comp-adj-note"><strong>Standard:</strong> Applied across multiple sessions &nbsp;·&nbsp; <strong>Lateral:</strong> System prompts + few-shot in full · Meta-prompting in one session</div>
+        </div>
+      </div>
+      <div class="comp-row">
+        <div class="comp-pill pill-adj">Adjusted</div>
+        <div>
+          <div class="comp-text">Build and present a multi-modal AI project — live panel</div>
+          <div class="comp-adj-note"><strong>Standard:</strong> 7 min + 5 min Q&A · 3 panellists &nbsp;·&nbsp; <strong>Lateral:</strong> 5 min + 3 min Q&A · 2 panellists min · All 4 components required</div>
+        </div>
+      </div>
+      <div class="comp-row">
+        <div class="comp-pill pill-same">Same</div>
+        <div>
+          <div class="comp-text">Conduct a full ethical review of any AI product brief — harms, accountability, designed safeguards</div>
+        </div>
+      </div>
+      <div class="comp-row">
+        <div class="comp-pill pill-adj">Adjusted</div>
+        <div>
+          <div class="comp-text">Steel-man the strongest opposing view on an AI and society question</div>
+          <div class="comp-adj-note"><strong>Standard:</strong> Applied across multiple topics &nbsp;·&nbsp; <strong>Lateral:</strong> One structured debate exercise</div>
+        </div>
+      </div>
+      <div class="comp-row">
+        <div class="comp-pill pill-same">Same</div>
+        <div>
+          <div class="comp-text">Articulate societal implications of AI automation, regulation, and environmental cost — with specific Indian context</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="l9-ca-right">
+      <div class="section-label">Assessment Structure</div>
+      <div class="assess-list">
+        <div class="assess-item"><span class="assess-tag at-quiz">Quiz ×3</span><div><div class="assess-label">3 quizzes · 15–20 min each</div><div class="assess-sub">Foundations + System Prompts · Creative AI Toolkit · AI and Society + Ethics</div></div></div>
+        <div class="assess-item"><span class="assess-tag at-test">Mid-Year</span><div><div class="assess-label">Mid-Year Test · 40 min · Week 19</div><div class="assess-sub">System prompt task · Steel-man argument · Ethical review scenario</div></div></div>
+        <div class="assess-item"><span class="assess-tag at-test">Final</span><div><div class="assess-label">Final Assessment · 40 min · Week 28</div><div class="assess-sub">System prompt design · Steel-man argument · Ethical review + accountability chain</div></div></div>
+        <div class="assess-item"><span class="assess-tag at-port">Package</span><div><div class="assess-label">Capstone Design Package</div><div class="assess-sub">Problem statement · Architecture · Prompt chain · Ethical review — submitted Session 19</div></div></div>
+        <div class="assess-item"><span class="assess-tag at-show">Panel</span><div><div class="assess-label">Capstone — Live Panel · Week 27</div><div class="assess-sub">5 min + 3 min Q&A · App + audio + video + research + deck</div></div></div>
+      </div>
+      <div class="badge-callout">
+        <div class="bc-top">
+          <div class="bc-icon">🏅</div>
+          <div class="bc-name">Campuslogix AI Aspire — Grade 9 Badge</div>
+        </div>
+        <div class="bc-body">Awarded in December on completion of all requirements. <strong>Identical to the badge earned by students on the standard four-year track.</strong></div>
+        <div class="bc-quote">"The lateral entry designation appears in the programme record — not on the badge itself."</div>
+      </div>
+      <div class="cert-badge">
+        <div class="cert-icon">🎓</div>
+        <div>
+          <div class="cert-name">Campuslogix AI Foundation Certificate</div>
+          <div class="cert-body">Also awarded on Capstone completion. <strong>The same certificate</strong> as students who completed all four years of the standard programme. The lateral entry route is a recognised, valid completion pathway.</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <div class="slide-badge badge-dark">Campuslogix AI Aspire &nbsp;·&nbsp; Lateral Entry G9</div>
+</div>
 </div>
 <script>
-const slides = Array.from(document.querySelectorAll('.slide'));
-function currentSlide() {
-  return slides.reduce((best, s, i) => {
-    const r = s.getBoundingClientRect();
-    const vis = Math.min(r.bottom, window.innerHeight) - Math.max(r.top, 0);
-    return vis > best.vis ? {idx: i, vis} : best;
-  }, {idx: 0, vis: -Infinity}).idx;
-}
-function goTo(idx) {
-  if (idx < 0 || idx >= slides.length) return;
-  slides[idx].scrollIntoView({behavior: 'smooth'});
-}
-document.addEventListener('keydown', e => {
-  if (['ArrowDown','ArrowRight',' '].includes(e.key)) {e.preventDefault(); goTo(currentSlide() + 1);}
-  if (['ArrowUp','ArrowLeft'].includes(e.key)) {e.preventDefault(); goTo(currentSlide() - 1);}
-});
-document.querySelectorAll('.tab-btn').forEach(function(btn) {
-  btn.addEventListener('click', function() {
-    var strip = this.closest('.tab-strip');
-    var slide = this.closest('.slide');
-    strip.querySelectorAll('.tab-btn').forEach(function(b) {
-      b.classList.remove('active');
+(function () {
+  var deck = document.querySelector('.deck');
+  var slides = Array.from(deck.querySelectorAll('.slide'));
+  var total = slides.length;
+  var current = 0;
+  var navLocked = false;
+
+  /* Position all slides using .active / .prev classes */
+  function render() {
+    slides.forEach(function (s, i) {
+      s.classList.remove('active', 'prev');
+      s.style.display = '';
+      if (i < current) s.classList.add('prev');
+      else if (i === current) s.classList.add('active');
     });
-    this.classList.add('active');
-    var targetId = this.getAttribute('data-tab');
-    slide.querySelectorAll('.tab-panel').forEach(function(p) {
-      p.classList.remove('active');
-    });
-    var target = document.getElementById(targetId);
-    if (target) target.classList.add('active');
+  }
+
+  function goTo(idx) {
+    if (idx < 0 || idx >= total || navLocked) return;
+    navLocked = true;
+    current = idx;
+    render();
+    setTimeout(function () { navLocked = false; }, 200);
+  }
+
+  /* Init: clear any inline display:none from old JS, seat first slide */
+  slides.forEach(function (s) {
+    s.style.display = '';
+    s.classList.remove('active', 'prev');
   });
-});
+  slides[0].classList.add('active');
+
+  /* Wheel / trackpad — one slide per gesture, 750ms cooldown */
+  var wheelBusy = false;
+  window.addEventListener('wheel', function (e) {
+    e.preventDefault();
+    if (wheelBusy || Math.abs(e.deltaY) < 10) return;
+    wheelBusy = true;
+    goTo(e.deltaY > 0 ? current + 1 : current - 1);
+    setTimeout(function () { wheelBusy = false; }, 750);
+  }, { passive: false });
+
+  /* Keyboard */
+  document.addEventListener('keydown', function (e) {
+    if (['ArrowDown', 'ArrowRight', ' '].includes(e.key)) { e.preventDefault(); goTo(current + 1); }
+    if (['ArrowUp', 'ArrowLeft'].includes(e.key))         { e.preventDefault(); goTo(current - 1); }
+  });
+
+  /* Touch swipe — skip if touch started inside a scrollable element */
+  var touchY = 0;
+  var touchEl = null;
+  function hasScrollableAncestor(el) {
+    while (el && el !== document.body) {
+      var oy = window.getComputedStyle(el).overflowY;
+      if ((oy === 'auto' || oy === 'scroll') && el.scrollHeight > el.clientHeight + 4) return true;
+      el = el.parentElement;
+    }
+    return false;
+  }
+  document.addEventListener('touchstart', function (e) {
+    touchY = e.touches[0].clientY;
+    touchEl = e.target;
+  }, { passive: true });
+  document.addEventListener('touchend', function (e) {
+    if (touchEl && hasScrollableAncestor(touchEl)) return;
+    var dy = touchY - e.changedTouches[0].clientY;
+    if (Math.abs(dy) > 50) goTo(dy > 0 ? current + 1 : current - 1);
+  }, { passive: true });
+
+  /* Tab switching — untouched logic */
+  document.querySelectorAll('.tab-btn').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var strip = this.closest('.tab-strip');
+      var slide = this.closest('.slide');
+      strip.querySelectorAll('.tab-btn').forEach(function (b) { b.classList.remove('active'); });
+      this.classList.add('active');
+      var targetId = this.getAttribute('data-tab');
+      slide.querySelectorAll('.tab-panel').forEach(function (p) { p.classList.remove('active'); });
+      var target = document.getElementById(targetId);
+      if (target) target.classList.add('active');
+    });
+  });
+
+}());
 </script>
 </body>
 </html>
