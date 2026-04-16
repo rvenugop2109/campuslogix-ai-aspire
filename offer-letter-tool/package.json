@@ -1,0 +1,15 @@
+{
+  "name": "mellone-offer-letter-tool",
+  "version": "1.0.0",
+  "description": "Internal tool for generating branded Mellone offer letters as PDFs",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "multer": "^1.4.5-lts.1",
+    "puppeteer": "^21.5.2"
+  }
+}

@@ -1,0 +1,286 @@
+/* ── Mellone Offer Letter Tool — Form UI ── */
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&display=swap');
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --deep-blue:  #1A1AE6;
+  --mid-blue:   #3333CC;
+  --periwinkle: #7B7BE8;
+  --pale-blue:  #A0A0F5;
+  --off-white:  #F4F4FB;
+  --dark-navy:  #1C1C2E;
+  --mid-gray:   #4A4A6A;
+}
+
+body {
+  font-family: 'Sora', sans-serif;
+  background: var(--off-white);
+  color: var(--dark-navy);
+  min-height: 100vh;
+  padding: 0 0 60px;
+}
+
+/* ── Header ── */
+.header {
+  background: #fff;
+  border-bottom: 3px solid var(--deep-blue);
+  padding: 20px 32px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.header-logo {
+  height: 40px;
+  width: auto;
+}
+
+.header-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--deep-blue);
+  letter-spacing: 0.4px;
+}
+
+.header-subtitle {
+  font-size: 13px;
+  color: var(--mid-gray);
+  margin-top: 2px;
+}
+
+/* ── Main layout ── */
+.container {
+  max-width: 760px;
+  margin: 48px auto 0;
+  padding: 0 16px;
+}
+
+/* ── Form card ── */
+.card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 40px 44px;
+  box-shadow: 0 2px 16px rgba(26, 26, 230, 0.07);
+}
+
+.card-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--deep-blue);
+  margin-bottom: 6px;
+}
+
+.card-desc {
+  font-size: 14px;
+  color: var(--mid-gray);
+  margin-bottom: 36px;
+  line-height: 1.6;
+}
+
+/* ── Form fields ── */
+.form-section {
+  margin-bottom: 28px;
+}
+
+.section-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  color: var(--mid-blue);
+  border-bottom: 2px solid var(--pale-blue);
+  padding-bottom: 6px;
+  margin-bottom: 20px;
+}
+
+.field-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px 24px;
+}
+
+.field-grid.single {
+  grid-template-columns: 1fr;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--dark-navy);
+}
+
+label .req {
+  color: var(--deep-blue);
+  margin-left: 2px;
+}
+
+label .opt {
+  color: var(--mid-gray);
+  font-weight: 400;
+  font-size: 12px;
+  margin-left: 4px;
+}
+
+input[type="text"],
+input[type="date"],
+input[type="file"] {
+  font-family: 'Sora', sans-serif;
+  font-size: 14px;
+  color: var(--dark-navy);
+  background: var(--off-white);
+  border: 1.5px solid #D4D4EE;
+  border-radius: 8px;
+  padding: 10px 14px;
+  transition: border-color 0.18s, box-shadow 0.18s;
+  outline: none;
+  width: 100%;
+}
+
+input[type="text"]:focus,
+input[type="date"]:focus {
+  border-color: var(--deep-blue);
+  box-shadow: 0 0 0 3px rgba(26, 26, 230, 0.10);
+  background: #fff;
+}
+
+input[type="file"] {
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+input[type="file"]::-webkit-file-upload-button {
+  font-family: 'Sora', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--deep-blue);
+  background: #fff;
+  border: 1.5px solid var(--deep-blue);
+  border-radius: 6px;
+  padding: 5px 12px;
+  margin-right: 12px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+input[type="file"]::-webkit-file-upload-button:hover {
+  background: var(--deep-blue);
+  color: #fff;
+}
+
+.field-hint {
+  font-size: 12px;
+  color: var(--mid-gray);
+  margin-top: -2px;
+}
+
+/* ── Error state ── */
+input.error {
+  border-color: #E63946;
+  box-shadow: 0 0 0 3px rgba(230, 57, 70, 0.10);
+}
+
+.error-msg {
+  font-size: 12px;
+  color: #E63946;
+  display: none;
+}
+
+.error-msg.visible {
+  display: block;
+}
+
+/* ── CTA button ── */
+.btn-generate {
+  font-family: 'Sora', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  color: #fff;
+  background: var(--deep-blue);
+  border: none;
+  border-radius: 8px;
+  padding: 14px 36px;
+  cursor: pointer;
+  margin-top: 32px;
+  width: 100%;
+  letter-spacing: 0.3px;
+  transition: background 0.18s, transform 0.12s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.btn-generate:hover {
+  background: var(--mid-blue);
+}
+
+.btn-generate:active {
+  transform: scale(0.99);
+}
+
+.btn-generate:disabled {
+  background: var(--periwinkle);
+  cursor: not-allowed;
+  transform: none;
+}
+
+.spinner {
+  width: 18px;
+  height: 18px;
+  border: 2.5px solid rgba(255,255,255,0.4);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  display: none;
+}
+
+.btn-generate.loading .spinner { display: block; }
+.btn-generate.loading .btn-text { opacity: 0.7; }
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ── Toast ── */
+.toast {
+  position: fixed;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%) translateY(80px);
+  background: var(--dark-navy);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 12px 24px;
+  border-radius: 8px;
+  opacity: 0;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+  z-index: 999;
+  white-space: nowrap;
+}
+
+.toast.show {
+  transform: translateX(-50%) translateY(0);
+  opacity: 1;
+}
+
+.toast.error-toast {
+  background: #E63946;
+}
+
+/* ── Responsive ── */
+@media (max-width: 620px) {
+  .card { padding: 28px 20px; }
+  .field-grid { grid-template-columns: 1fr; }
+}

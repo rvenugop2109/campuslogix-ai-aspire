@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&display=swap');
+
+    /* ── Reset & base ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --deep-blue:  #1A1AE6;
+      --mid-blue:   #3333CC;
+      --dark-navy:  #1C1C2E;
+      --mid-gray:   #4A4A6A;
+    }
+
+    body {
+      font-family: 'Sora', Arial, sans-serif;
+      font-size: 10pt;
+      color: var(--dark-navy);
+      background: #fff;
+      line-height: 1.65;
+    }
+
+    /* ── Page breaks ── */
+    .page {
+      page-break-after: always;
+      padding-bottom: 8mm;
+    }
+    .page:last-child {
+      page-break-after: auto;
+    }
+
+    /* ── Letterhead ── */
+    .letterhead {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 6px;
+    }
+
+    .letterhead-left .company-name {
+      font-size: 11pt;
+      font-weight: 700;
+      color: var(--deep-blue);
+      margin-bottom: 3px;
+    }
+
+    .letterhead-left .company-meta {
+      font-size: 7.5pt;
+      color: var(--mid-gray);
+      line-height: 1.55;
+    }
+
+    .letterhead-right img.logo {
+      height: 44px;
+      width: auto;
+    }
+
+    .letterhead-rule {
+      border: none;
+      border-top: 2px solid var(--deep-blue);
+      margin: 8px 0 16px;
+    }
+
+    /* ── Document heading ── */
+    .doc-heading {
+      text-align: center;
+      margin-bottom: 18px;
+    }
+
+    .doc-heading h1 {
+      font-size: 14pt;
+      font-weight: 700;
+      color: var(--deep-blue);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 4px;
+    }
+
+    .doc-heading .offer-ref {
+      font-size: 8.5pt;
+      color: var(--mid-gray);
+    }
+
+    /* ── Date / addressee block ── */
+    .meta-block {
+      margin-bottom: 16px;
+      font-size: 9.5pt;
+    }
+
+    .meta-block .label {
+      font-weight: 600;
+      color: var(--mid-gray);
+      font-size: 8pt;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+    }
+
+    /* ── Salutation ── */
+    .salutation {
+      margin-bottom: 12px;
+      font-size: 10pt;
+    }
+
+    /* ── Body paragraphs ── */
+    .body-text {
+      font-size: 9.5pt;
+      margin-bottom: 12px;
+      text-align: justify;
+      line-height: 1.7;
+    }
+
+    /* ── Section title ── */
+    .section-title {
+      font-size: 10pt;
+      font-weight: 700;
+      color: var(--deep-blue);
+      margin-top: 16px;
+      margin-bottom: 2px;
+      border-bottom: 1.5px solid var(--mid-blue);
+      padding-bottom: 3px;
+    }
+
+    /* ── Key terms table ── */
+    .terms-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 10px 0 14px;
+      font-size: 9pt;
+    }
+
+    .terms-table th {
+      background: #EEEEF9;
+      color: var(--mid-blue);
+      font-weight: 700;
+      text-align: left;
+      padding: 6px 10px;
+      font-size: 8.5pt;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .terms-table td {
+      padding: 7px 10px;
+      border-bottom: 1px solid #E4E4F0;
+      color: var(--dark-navy);
+      vertical-align: top;
+    }
+
+    .terms-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .terms-table td.term-label {
+      font-weight: 600;
+      width: 42%;
+      color: var(--mid-gray);
+    }
+
+    .terms-table td.term-value {
+      font-weight: 600;
+      color: var(--dark-navy);
+    }
+
+    /* ── Bullet lists ── */
+    .bullet-list {
+      padding-left: 18px;
+      margin: 6px 0 12px;
+      font-size: 9.5pt;
+    }
+
+    .bullet-list li {
+      margin-bottom: 5px;
+      line-height: 1.6;
+    }
+
+    /* ── Signature page ── */
+    .sig-page {
+      margin-top: 8mm;
+    }
+
+    .sig-columns {
+      display: flex;
+      gap: 40px;
+      margin-top: 24px;
+    }
+
+    .sig-col {
+      flex: 1;
+    }
+
+    .sig-col-label {
+      font-size: 9pt;
+      font-weight: 700;
+      color: var(--mid-gray);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-bottom: 20px;
+    }
+
+    .sig-image {
+      max-height: 60px;
+      width: auto;
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    .sig-blank {
+      height: 50px;
+      border-bottom: 1px solid var(--dark-navy);
+      width: 160px;
+      margin-bottom: 6px;
+    }
+
+    .sig-name {
+      font-size: 9.5pt;
+      font-weight: 700;
+      color: var(--dark-navy);
+      margin-bottom: 2px;
+    }
+
+    .sig-role {
+      font-size: 8.5pt;
+      color: var(--mid-gray);
+      margin-bottom: 12px;
+    }
+
+    .sig-date-line {
+      font-size: 8.5pt;
+      color: var(--mid-gray);
+      margin-top: 8px;
+    }
+
+    .sig-date-line span {
+      display: inline-block;
+      width: 120px;
+      border-bottom: 1px solid var(--mid-gray);
+      margin-left: 8px;
+    }
+
+    /* ── Confidentiality footer ── */
+    .confidentiality-footer {
+      margin-top: 32px;
+      padding-top: 10px;
+      border-top: 1px solid #D4D4EE;
+      font-size: 7.5pt;
+      color: var(--mid-gray);
+      text-align: center;
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════════
+     PAGE 1 — Offer Letter Opening & Key Terms
+     ════════════════════════════════════════════ -->
+<div class="page">
+
+  <!-- Letterhead -->
+  <div class="letterhead">
+    <div class="letterhead-left">
+      <div class="company-name">Newlogix Technologies Pvt Ltd</div>
+      <div class="company-meta">
+        CIN: [CIN NUMBER] &nbsp;|&nbsp; Registered in India<br />
+        [Company Address Line 1], [City], [State] – [PIN]<br />
+        www.mellone.ai &nbsp;|&nbsp; +91 XXXXX XXXXX &nbsp;|&nbsp; hello@mellone.ai
+      </div>
+    </div>
+    <div class="letterhead-right">
+      <img class="logo" src="{{MELLONE_LOGO_SRC}}" alt="Mellone" />
+    </div>
+  </div>
+  <hr class="letterhead-rule" />
+
+  <!-- Document heading -->
+  <div class="doc-heading">
+    <h1>Letter of Offer</h1>
+    <div class="offer-ref">Private &amp; Confidential</div>
+  </div>
+
+  <!-- Date & Candidate block -->
+  <div class="meta-block">
+    <div class="label">Date</div>
+    <div>{{OFFER_DATE}}</div>
+    <br />
+    <div class="label">To</div>
+    <div><strong>{{CANDIDATE_NAME}}</strong></div>
+  </div>
+
+  <div class="salutation">Dear {{CANDIDATE_NAME}},</div>
+
+  <p class="body-text">
+    We are delighted to extend this offer of employment to you for the position of <strong>{{JOB_TITLE}}</strong> within the <strong>{{DEPARTMENT}}</strong> department at <strong>Newlogix Technologies Pvt Ltd (operating as Mellone)</strong>. This offer reflects our confidence in your abilities and our excitement about the contribution you will make to our team.
+  </p>
+
+  <p class="body-text">
+    Please review the terms and conditions of this offer carefully. Should you have any questions, do not hesitate to reach out to us. We request that you confirm your acceptance by <strong>{{ACCEPTANCE_DEADLINE}}</strong>.
+  </p>
+
+  <!-- Key Terms -->
+  <div class="section-title">Key Terms of Employment</div>
+
+  <table class="terms-table">
+    <thead>
+      <tr>
+        <th>Term</th>
+        <th>Details</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="term-label">Position / Designation</td>
+        <td class="term-value">{{JOB_TITLE}}</td>
+      </tr>
+      <tr>
+        <td class="term-label">Department</td>
+        <td class="term-value">{{DEPARTMENT}}</td>
+      </tr>
+      <tr>
+        <td class="term-label">Reporting To</td>
+        <td class="term-value">{{REPORTING_MANAGER}}</td>
+      </tr>
+      <tr>
+        <td class="term-label">Date of Joining</td>
+        <td class="term-value">{{DATE_OF_JOINING}}</td>
+      </tr>
+      <tr>
+        <td class="term-label">Total CTC (Annual)</td>
+        <td class="term-value">{{TOTAL_CTC}}</td>
+      </tr>
+      <tr>
+        <td class="term-label">Employment Type</td>
+        <td class="term-value">Full-Time, Permanent</td>
+      </tr>
+      <tr>
+        <td class="term-label">Place of Work</td>
+        <td class="term-value">[Office Address / Remote / Hybrid — specify]</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- Nature of Role -->
+  <div class="section-title">Nature of the Role</div>
+  <p class="body-text">
+    [Describe the role in 2–3 sentences — responsibilities, scope, and team context. This is a placeholder. Paste your content here.]
+  </p>
+
+</div><!-- /page 1 -->
+
+
+<!-- ════════════════════════════════════════════
+     PAGE 2 — Conditions, Policies & Clauses
+     ════════════════════════════════════════════ -->
+<div class="page">
+
+  <!-- Letterhead repeated -->
+  <div class="letterhead">
+    <div class="letterhead-left">
+      <div class="company-name">Newlogix Technologies Pvt Ltd</div>
+      <div class="company-meta">
+        CIN: [CIN NUMBER] &nbsp;|&nbsp; Registered in India<br />
+        [Company Address Line 1], [City], [State] – [PIN]<br />
+        www.mellone.ai &nbsp;|&nbsp; +91 XXXXX XXXXX &nbsp;|&nbsp; hello@mellone.ai
+      </div>
+    </div>
+    <div class="letterhead-right">
+      <img class="logo" src="{{MELLONE_LOGO_SRC}}" alt="Mellone" />
+    </div>
+  </div>
+  <hr class="letterhead-rule" />
+
+  <!-- Compensation -->
+  <div class="section-title">Compensation &amp; Benefits</div>
+  <p class="body-text">
+    Your total annual Cost to Company (CTC) will be <strong>{{TOTAL_CTC}}</strong>. A detailed compensation breakup will be provided separately as part of your appointment letter upon joining. Your salary will be subject to applicable tax deductions as per Indian tax laws.
+  </p>
+
+  <!-- Conditions -->
+  <div class="section-title">Conditions of This Offer</div>
+  <p class="body-text">This offer is conditional upon the following:</p>
+  <ul class="bullet-list">
+    <li>Satisfactory completion of background and reference checks.</li>
+    <li>Submission of all required original documents for verification prior to or on your date of joining.</li>
+    <li>You not being subject to any non-compete, non-solicitation, or other restrictive covenants with a prior employer that would prevent you from performing your duties with us.</li>
+    <li>Your acceptance of this offer by the deadline stated above.</li>
+  </ul>
+
+  <!-- Probation -->
+  <div class="section-title">Probation Period</div>
+  <p class="body-text">
+    [Placeholder — specify probation period, e.g., "You will be on a probationary period of six (6) months from your date of joining, during which your performance will be reviewed. Upon satisfactory completion of the probationary period, you will be confirmed as a permanent employee."]
+  </p>
+
+  <!-- Confidentiality -->
+  <div class="section-title">Confidentiality &amp; Intellectual Property</div>
+  <p class="body-text">
+    [Placeholder — insert your confidentiality and IP assignment clause here. Example: "As a condition of your employment, you agree to maintain the confidentiality of all proprietary information, trade secrets, and business data of Newlogix Technologies Pvt Ltd. All work product, inventions, and intellectual property created in the scope of your employment shall vest exclusively in the Company."]
+  </p>
+
+  <!-- Notice period -->
+  <div class="section-title">Notice Period</div>
+  <p class="body-text">
+    [Placeholder — e.g., "Either party may terminate this employment by providing [X] months' written notice or payment in lieu of notice, subject to the terms of the appointment letter."]
+  </p>
+
+  <!-- Governing law -->
+  <div class="section-title">Governing Law</div>
+  <p class="body-text">
+    This offer and any employment arising from it shall be governed by and construed in accordance with the laws of India. Any disputes shall be subject to the exclusive jurisdiction of the courts of [City], India.
+  </p>
+
+  <!-- Closing -->
+  <p class="body-text">
+    We are very much looking forward to welcoming you to the Mellone team. Please sign and return this letter by <strong>{{ACCEPTANCE_DEADLINE}}</strong> to confirm your acceptance of this offer. If you have any questions, please contact us at <strong>hello@mellone.ai</strong>.
+  </p>
+
+  <p class="body-text">
+    Warm regards,
+  </p>
+
+</div><!-- /page 2 -->
+
+
+<!-- ════════════════════════════════════════════
+     PAGE 3 — Signature Page
+     ════════════════════════════════════════════ -->
+<div class="page">
+
+  <!-- Letterhead repeated -->
+  <div class="letterhead">
+    <div class="letterhead-left">
+      <div class="company-name">Newlogix Technologies Pvt Ltd</div>
+      <div class="company-meta">
+        CIN: [CIN NUMBER] &nbsp;|&nbsp; Registered in India<br />
+        [Company Address Line 1], [City], [State] – [PIN]<br />
+        www.mellone.ai &nbsp;|&nbsp; +91 XXXXX XXXXX &nbsp;|&nbsp; hello@mellone.ai
+      </div>
+    </div>
+    <div class="letterhead-right">
+      <img class="logo" src="{{MELLONE_LOGO_SRC}}" alt="Mellone" />
+    </div>
+  </div>
+  <hr class="letterhead-rule" />
+
+  <div class="sig-page">
+
+    <p class="body-text" style="margin-bottom: 8px;">
+      By signing below, both parties confirm their agreement to the terms set out in this Letter of Offer.
+    </p>
+
+    <div class="sig-columns">
+
+      <!-- Company (Left) -->
+      <div class="sig-col">
+        <div class="sig-col-label">For Newlogix Technologies Pvt Ltd (Mellone)</div>
+
+        {{FOUNDER_SIGNATURE_HTML}}
+
+        <div class="sig-role">Founder</div>
+
+        <div class="sig-date-line">Date: <span></span></div>
+      </div>
+
+      <!-- Candidate (Right) -->
+      <div class="sig-col">
+        <div class="sig-col-label">Accepted by</div>
+
+        <div class="sig-blank"></div>
+
+        <p class="sig-name">{{CANDIDATE_NAME}}</p>
+        <div class="sig-role">{{JOB_TITLE}}</div>
+
+        <div class="sig-date-line">Date: <span></span></div>
+      </div>
+
+    </div><!-- /sig-columns -->
+
+    <!-- Confidentiality footer -->
+    <div class="confidentiality-footer">
+      This document is private and confidential and is intended solely for the named recipient.<br />
+      Newlogix Technologies Pvt Ltd (Mellone) &nbsp;·&nbsp; www.mellone.ai &nbsp;·&nbsp; hello@mellone.ai
+    </div>
+
+  </div><!-- /sig-page -->
+
+</div><!-- /page 3 -->
+
+</body>
+</html>

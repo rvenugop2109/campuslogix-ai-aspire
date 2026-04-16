@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mellone — Offer Letter Generator</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <header class="header">
+    <img src="assets/mellone_logo.png" alt="Mellone" class="header-logo" onerror="this.style.display='none'" />
+    <div>
+      <div class="header-title">Offer Letter Generator</div>
+      <div class="header-subtitle">Mellone · Newlogix Technologies Pvt Ltd · Internal HR Tool</div>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="card">
+      <h1 class="card-title">Generate an Offer Letter</h1>
+      <p class="card-desc">Fill in the candidate details below. All fields are required unless marked optional. Click Generate to download a branded A4 PDF.</p>
+
+      <form id="offerForm" novalidate>
+
+        <!-- CANDIDATE -->
+        <div class="form-section">
+          <div class="section-label">Candidate Details</div>
+          <div class="field-grid">
+            <div class="field">
+              <label for="candidateName">Candidate Name <span class="req">*</span></label>
+              <input type="text" id="candidateName" name="candidateName" placeholder="e.g. Priya Sharma" autocomplete="off" />
+              <span class="error-msg" id="err-candidateName">Please enter the candidate's name.</span>
+            </div>
+            <div class="field">
+              <label for="jobTitle">Job Title / Designation <span class="req">*</span></label>
+              <input type="text" id="jobTitle" name="jobTitle" placeholder="e.g. Senior AI Consultant" autocomplete="off" />
+              <span class="error-msg" id="err-jobTitle">Please enter the job title.</span>
+            </div>
+            <div class="field">
+              <label for="department">Department <span class="req">*</span></label>
+              <input type="text" id="department" name="department" placeholder="e.g. Learning & Development" autocomplete="off" />
+              <span class="error-msg" id="err-department">Please enter the department.</span>
+            </div>
+            <div class="field">
+              <label for="reportingManager">Reporting Manager — Name &amp; Designation <span class="req">*</span></label>
+              <input type="text" id="reportingManager" name="reportingManager" placeholder="e.g. Rakesh Venugopal, Founder" autocomplete="off" />
+              <span class="error-msg" id="err-reportingManager">Please enter the reporting manager details.</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- OFFER TERMS -->
+        <div class="form-section">
+          <div class="section-label">Offer Terms</div>
+          <div class="field-grid">
+            <div class="field">
+              <label for="dateOfJoining">Date of Joining <span class="req">*</span></label>
+              <input type="date" id="dateOfJoining" name="dateOfJoining" />
+              <span class="error-msg" id="err-dateOfJoining">Please select a joining date.</span>
+            </div>
+            <div class="field">
+              <label for="totalCTC">Total CTC — Annual <span class="req">*</span></label>
+              <input type="text" id="totalCTC" name="totalCTC" placeholder="e.g. ₹18,00,000" autocomplete="off" />
+              <span class="error-msg" id="err-totalCTC">Please enter the total CTC.</span>
+            </div>
+            <div class="field">
+              <label for="offerDate">Offer Date <span class="req">*</span></label>
+              <input type="date" id="offerDate" name="offerDate" />
+              <span class="error-msg" id="err-offerDate">Please select the offer date.</span>
+            </div>
+            <div class="field">
+              <label for="acceptanceDeadline">Offer Acceptance Deadline <span class="req">*</span></label>
+              <input type="date" id="acceptanceDeadline" name="acceptanceDeadline" />
+              <span class="error-msg" id="err-acceptanceDeadline">Please select an acceptance deadline.</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- SIGNATURE -->
+        <div class="form-section">
+          <div class="section-label">Founder Signature</div>
+          <div class="field-grid single">
+            <div class="field">
+              <label for="founderSignature">Signature Image <span class="opt">(optional — JPEG only)</span></label>
+              <input type="file" id="founderSignature" name="founderSignature" accept="image/jpeg" />
+              <span class="field-hint">If not uploaded, the printed name will appear without an image.</span>
+            </div>
+          </div>
+        </div>
+
+        <button type="submit" class="btn-generate" id="generateBtn">
+          <div class="spinner"></div>
+          <span class="btn-text">Generate Offer Letter PDF</span>
+        </button>
+
+      </form>
+    </div>
+  </main>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const form = document.getElementById('offerForm');
+    const btn  = document.getElementById('generateBtn');
+    const toast = document.getElementById('toast');
+
+    const requiredFields = [
+      'candidateName',
+      'jobTitle',
+      'department',
+      'reportingManager',
+      'dateOfJoining',
+      'totalCTC',
+      'offerDate',
+      'acceptanceDeadline',
+    ];
+
+    function showToast(msg, isError = false) {
+      toast.textContent = msg;
+      toast.className = 'toast' + (isError ? ' error-toast' : '');
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 4000);
+    }
+
+    function validate() {
+      let valid = true;
+      requiredFields.forEach(id => {
+        const input = document.getElementById(id);
+        const err   = document.getElementById('err-' + id);
+        if (!input.value.trim()) {
+          input.classList.add('error');
+          err.classList.add('visible');
+          valid = false;
+        } else {
+          input.classList.remove('error');
+          err.classList.remove('visible');
+        }
+      });
+      return valid;
+    }
+
+    // Clear error on input
+    requiredFields.forEach(id => {
+      document.getElementById(id).addEventListener('input', () => {
+        document.getElementById(id).classList.remove('error');
+        document.getElementById('err-' + id).classList.remove('visible');
+      });
+    });
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!validate()) {
+        showToast('Please fill in all required fields.', true);
+        return;
+      }
+
+      btn.classList.add('loading');
+      btn.disabled = true;
+
+      try {
+        const formData = new FormData(form);
+        const response = await fetch('/generate-pdf', {
+          method: 'POST',
+          body: formData,
+        });
+
+        if (!response.ok) {
+          const errData = await response.json().catch(() => ({}));
+          throw new Error(errData.error || 'Server error');
+        }
+
+        // Trigger download
+        const blob = await response.blob();
+        const candidateName = document.getElementById('candidateName').value.trim().replace(/\s+/g, '_');
+        const doj = document.getElementById('dateOfJoining').value;
+        const d = new Date(doj);
+        const datePart = [
+          String(d.getDate()).padStart(2,'0'),
+          String(d.getMonth()+1).padStart(2,'0'),
+          d.getFullYear(),
+        ].join('');
+        const filename = `Offer_Letter_${candidateName}_${datePart}.pdf`;
+
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+
+        showToast('Offer letter generated successfully!');
+      } catch (err) {
+        showToast('Error: ' + err.message, true);
+      } finally {
+        btn.classList.remove('loading');
+        btn.disabled = false;
+      }
+    });
+  </script>
+
+</body>
+</html>

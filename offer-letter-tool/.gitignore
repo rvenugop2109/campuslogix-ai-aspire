@@ -1,0 +1,4 @@
+node_modules/
+generated_pdfs/
+*.pdf
+.DS_Store
