@@ -16,12 +16,16 @@
     </div>
   </header>
 
+  <div id="serverBanner" class="server-banner" hidden>
+    Server not running &mdash; open a terminal and run: <code>node server.js</code> inside the <code>offer-letter-tool</code> folder, then refresh this page.
+  </div>
+
   <main class="container">
     <div class="card">
       <h1 class="card-title">Generate an Offer Letter</h1>
       <p class="card-desc">Fill in the candidate details below. All fields are required unless marked optional. Click Generate to download a branded A4 PDF.</p>
 
-      <form id="offerForm" novalidate>
+      <form id="offerForm" method="post" enctype="multipart/form-data" novalidate>
 
         <!-- CANDIDATE -->
         <div class="form-section">
@@ -107,29 +111,33 @@
   <div class="toast" id="toast"></div>
 
   <script>
-    const form = document.getElementById('offerForm');
-    const btn  = document.getElementById('generateBtn');
+    const form       = document.getElementById('offerForm');
+    const btn        = document.getElementById('generateBtn');
     const previewBtn = document.getElementById('previewBtn');
-    const toast = document.getElementById('toast');
+    const toast      = document.getElementById('toast');
+    const banner     = document.getElementById('serverBanner');
 
     const requiredFields = [
-      'candidateName',
-      'jobTitle',
-      'department',
-      'reportingManager',
-      'dateOfJoining',
-      'totalCTC',
-      'offerDate',
-      'acceptanceDeadline',
+      'candidateName', 'jobTitle', 'department', 'reportingManager',
+      'dateOfJoining', 'totalCTC', 'offerDate', 'acceptanceDeadline',
     ];
 
-    function showToast(msg, isError = false) {
+    // ── Server health check on load ──────────────────────────────────────────
+    fetch('/health').then(r => {
+      if (r.ok) banner.hidden = true;
+    }).catch(() => {
+      banner.hidden = false;
+    });
+
+    // ── Toast ────────────────────────────────────────────────────────────────
+    function showToast(msg, isError = false, duration = 5000) {
       toast.textContent = msg;
       toast.className = 'toast' + (isError ? ' error-toast' : '');
       toast.classList.add('show');
-      setTimeout(() => toast.classList.remove('show'), 4000);
+      setTimeout(() => toast.classList.remove('show'), duration);
     }
 
+    // ── Validation ───────────────────────────────────────────────────────────
     function validate() {
       let valid = true;
       requiredFields.forEach(id => {
@@ -144,10 +152,13 @@
           err.classList.remove('visible');
         }
       });
+      if (!valid) {
+        // Scroll to first error
+        document.querySelector('input.error').scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
       return valid;
     }
 
-    // Clear error on input
     requiredFields.forEach(id => {
       document.getElementById(id).addEventListener('input', () => {
         document.getElementById(id).classList.remove('error');
@@ -155,42 +166,28 @@
       });
     });
 
-    previewBtn.addEventListener('click', async () => {
+    // ── Preview — direct native form POST to _blank ──────────────────────────
+    // This avoids popup blockers entirely. The browser opens the response
+    // HTML directly in a new tab without any JS window.open() call.
+    previewBtn.addEventListener('click', () => {
       if (!validate()) {
-        showToast('Please fill in all required fields before previewing.', true);
+        showToast('Fill in all required fields first.', true);
         return;
       }
-
-      previewBtn.disabled = true;
-      previewBtn.querySelector('span').textContent = 'Loading…';
-
-      try {
-        const formData = new FormData(form);
-        const response = await fetch('/preview', { method: 'POST', body: formData });
-
-        if (!response.ok) {
-          const err = await response.json().catch(() => ({}));
-          throw new Error(err.error || 'Preview failed');
-        }
-
-        const html = await response.text();
-        const blob = new Blob([html], { type: 'text/html' });
-        const url  = URL.createObjectURL(blob);
-        window.open(url, '_blank');
-        // Revoke after a short delay so the new tab has time to load it
-        setTimeout(() => URL.revokeObjectURL(url), 10000);
-      } catch (err) {
-        showToast('Preview error: ' + err.message, true);
-      } finally {
-        previewBtn.disabled = false;
-        previewBtn.querySelector('span').textContent = 'Preview';
-      }
+      // Temporarily point the form at /preview and open in new tab
+      form.action = '/preview';
+      form.target = '_blank';
+      form.submit();
+      // Restore so the submit button still hits /generate-pdf via fetch
+      form.action   = '';
+      form.target   = '';
     });
 
+    // ── Generate PDF — fetch + stream download ───────────────────────────────
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       if (!validate()) {
-        showToast('Please fill in all required fields.', true);
+        showToast('Fill in all required fields.', true);
         return;
       }
 
@@ -199,40 +196,38 @@
 
       try {
         const formData = new FormData(form);
-        const response = await fetch('/generate-pdf', {
-          method: 'POST',
-          body: formData,
-        });
+        const response = await fetch('/generate-pdf', { method: 'POST', body: formData });
 
         if (!response.ok) {
           const errData = await response.json().catch(() => ({}));
-          throw new Error(errData.error || 'Server error');
+          throw new Error(errData.error || `Server error (${response.status})`);
         }
 
-        // Trigger download
         const blob = await response.blob();
-        const candidateName = document.getElementById('candidateName').value.trim().replace(/\s+/g, '_');
-        const doj = document.getElementById('dateOfJoining').value;
-        const d = new Date(doj);
-        const datePart = [
-          String(d.getDate()).padStart(2,'0'),
-          String(d.getMonth()+1).padStart(2,'0'),
-          d.getFullYear(),
-        ].join('');
-        const filename = `Offer_Letter_${candidateName}_${datePart}.pdf`;
 
+        // Build filename
+        const candidateName = document.getElementById('candidateName').value.trim().replace(/\s+/g, '_');
+        const doj = document.getElementById('dateOfJoining').value; // YYYY-MM-DD
+        const [y, m, d] = doj.split('-');
+        const filename = `Offer_Letter_${candidateName}_${d}${m}${y}.pdf`;
+
+        // Trigger download
         const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
+        const a   = document.createElement('a');
+        a.href     = url;
         a.download = filename;
         document.body.appendChild(a);
         a.click();
         a.remove();
-        URL.revokeObjectURL(url);
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
 
-        showToast('Offer letter generated successfully!');
+        showToast('Offer letter downloaded successfully!');
       } catch (err) {
-        showToast('Error: ' + err.message, true);
+        const isNetworkError = err.message.includes('fetch') || err.message.includes('Failed');
+        const msg = isNetworkError
+          ? 'Cannot reach server. Is `node server.js` running?'
+          : 'Error: ' + err.message;
+        showToast(msg, true, 8000);
       } finally {
         btn.classList.remove('loading');
         btn.disabled = false;

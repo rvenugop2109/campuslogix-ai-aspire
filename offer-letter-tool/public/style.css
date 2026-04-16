@@ -25,6 +25,27 @@ body {
   padding: 0 0 60px;
 }
 
+/* ── Server warning banner ── */
+.server-banner {
+  background: #FFF3CD;
+  border-bottom: 2px solid #E6AC00;
+  color: #5A4000;
+  font-family: 'Sora', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 12px 24px;
+  text-align: center;
+  line-height: 1.5;
+}
+
+.server-banner code {
+  background: rgba(0,0,0,0.08);
+  border-radius: 4px;
+  padding: 1px 6px;
+  font-family: monospace;
+  font-size: 12px;
+}
+
 /* ── Header ── */
 .header {
   background: #fff;

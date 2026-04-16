@@ -73,6 +73,8 @@ function filenameDate(dateOfJoining) {
 
 // ── Routes ────────────────────────────────────────────────────────────────────
 
+app.get('/health', (req, res) => res.json({ ok: true }));
+
 // Preview — returns rendered HTML for browser display
 app.post('/preview', upload.single('founderSignature'), (req, res) => {
   try {
